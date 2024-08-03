@@ -57,7 +57,7 @@
                                             <button class="btn btn-register w-100" type="submit">Register</button>
                                         </div>
                                         <div class="col-12">
-                                            <p class="small mb-0">Already have an account? <a href="http://127.0.0.1:8000/">Login</a></p>
+                                            <p class="small mb-0">Already have an account? <a href="/">Login</a></p>
                                         </div>
                                     </form>
                                 </div>
@@ -104,7 +104,7 @@
             .then(function(response) {
                 if (response.data.success) {
                     alert('Registration successful. Please login.');
-                    window.location.href = 'http://127.0.0.1:8000/';
+                    window.location.href = '/';
                 } else {
                     alert('Registration failed: ' + response.data.message);
                 }

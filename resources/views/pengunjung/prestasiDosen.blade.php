@@ -37,14 +37,14 @@
         <div class="branding d-flex align-items-cente">
 
           <div class="container position-relative d-flex align-items-center justify-content-between">
-            <a href="http://127.0.0.1:8000/pengunjung" class="logo d-flex align-items-center">
+            <a href="/pengunjung" class="logo d-flex align-items-center">
                 <img src="assets/img/logoTRK.png" alt="PSTRK Logo" style="height: 40px; margin-right: 20px;">
                 <h1 class="sitename">PSTRK</h1>
             </a>
 
             <nav id="navmenu" class="navmenu">
               <ul>
-                <li><a href="http://127.0.0.1:8000/pengunjung" >Beranda</a></li>
+                <li><a href="/pengunjung" >Beranda</a></li>
                 <li class="dropdown"><a href=""><span>Profil</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                   <ul>
                     <li><a href="profilPengunjung">Profil Singkat</a></li>
@@ -55,28 +55,28 @@
                 </li>
                 <li class="dropdown"><a href=""><span>Akademik</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                     <ul>
-                      <li><a href="http://127.0.0.1:8000/kurikulumPengunjung">Kurikulum</a></li>
-                      <li><a href="http://127.0.0.1:8000/akreditasiPengunjung">Akreditasi</a></li>
-                      <li><a href="http://127.0.0.1:8000/fasilitasPengunjung">Fasilitas</a></li>
+                      <li><a href="/kurikulumPengunjung">Kurikulum</a></li>
+                      <li><a href="/akreditasiPengunjung">Akreditasi</a></li>
+                      <li><a href="/fasilitasPengunjung">Fasilitas</a></li>
                     </ul>
                   </li>
                   <li class="dropdown"><a href="" class="active"><span>Berita & Prestasi</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                     <ul>
-                      <li><a href="http://127.0.0.1:8000/beritaDosen">Berita Dosen</a></li>
-                      <li><a href="http://127.0.0.1:8000/beritaMhs">Berita Mahasiswa</a></li>
-                      <li><a href="http://127.0.0.1:8000/prestasiDosen">Prestasi Dosen</a></li>
-                      <li><a href="http://127.0.0.1:8000/prestasiMhs">Prestasi Mahasiswa</a></li>
+                      <li><a href="/beritaDosen">Berita Dosen</a></li>
+                      <li><a href="/beritaMhs">Berita Mahasiswa</a></li>
+                      <li><a href="/prestasiDosen">Prestasi Dosen</a></li>
+                      <li><a href="/prestasiMhs">Prestasi Mahasiswa</a></li>
                     </ul>
                   </li>
                   <li class="dropdown"><a href=""><span>Dokumentasi</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                     <ul>
-                      <li><a href="http://127.0.0.1:8000/kegiatanDosen">Kegiatan Dosen</a></li>
-                      <li><a href="http://127.0.0.1:8000/kegiatanMhs">Kegiatan Mahasiswa</a></li>
-                      <li><a href="http://127.0.0.1:8000/fotoPengunjung">Foto</a></li>
-                      <li><a href="http://127.0.0.1:8000/videoPengunjung">Video</a></li>
+                      <li><a href="/kegiatanDosen">Kegiatan Dosen</a></li>
+                      <li><a href="/kegiatanMhs">Kegiatan Mahasiswa</a></li>
+                      <li><a href="/fotoPengunjung">Foto</a></li>
+                      <li><a href="/videoPengunjung">Video</a></li>
                     </ul>
                   </li>
-                <li><a href="http://127.0.0.1:8000/faqPengunjung">FAQ</a></li>
+                <li><a href="/faqPengunjung">FAQ</a></li>
               </ul>
               <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
             </nav>
@@ -313,7 +313,7 @@
 
               setTimeout(() => {
                 console.log('Redirecting to dashboard');
-                window.location.href = "http://127.0.0.1:8000/prestasiDosen";
+                window.location.href = "/prestasiDosen";
               }, 500); // Delay to ensure modal is closed
             });
           },

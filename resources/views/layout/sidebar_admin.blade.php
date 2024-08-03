@@ -48,28 +48,28 @@
         <aside id="sidebar" class="sidebar">
             <ul class="sidebar-nav" id="sidebar-nav">
                 <li class="nav-item">
-                    <a class="nav-link " href="http://127.0.0.1:8000/dashboard">
+                    <a class="nav-link " href="/dashboard">
                         <i class="bi bi-grid"></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link collapsed" href="http://127.0.0.1:8000/dosen">
+                    <a class="nav-link collapsed" href="/dosen">
                       <i class="bi bi-person"></i>
                       <span>Dosen</span>
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link collapsed" href="http://127.0.0.1:8000/kurikulum">
+                    <a class="nav-link collapsed" href="/kurikulum">
                       <i class="bi bi-folder"></i>
                       <span>Kurikulum</span>
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link collapsed" href="http://127.0.0.1:8000/jenis_konten">
+                    <a class="nav-link collapsed" href="/jenis_konten">
                       <i class="bi bi-person-plus"></i>
                       <span>Jenis Konten</span>
                     </a>
@@ -81,37 +81,37 @@
                     </a>
                     <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
                         <li>
-                            <a href="http://127.0.0.1:8000/berita">
+                            <a href="/berita">
                                 <i class="bi bi-circle"></i><span>Berita</span>
                             </a>
                         </li>
                         <li>
-                            <a href="http://127.0.0.1:8000/prestasi">
+                            <a href="/prestasi">
                                 <i class="bi bi-circle"></i><span>Prestasi</span>
                             </a>
                         </li>
                         <li>
-                            <a href="http://127.0.0.1:8000/kegiatan">
+                            <a href="/kegiatan">
                                 <i class="bi bi-circle"></i><span>Kegiatan</span>
                             </a>
                         </li>
                         <li>
-                            <a href="http://127.0.0.1:8000/akreditasi">
+                            <a href="/akreditasi">
                                 <i class="bi bi-circle"></i><span>Akreditasi</span>
                             </a>
                         </li>
                         <li>
-                            <a href="http://127.0.0.1:8000/alumni">
+                            <a href="/alumni">
                                 <i class="bi bi-circle"></i><span>Prospek Alumni</span>
                             </a>
                         </li>
                         <li>
-                            <a href="http://127.0.0.1:8000/profil">
+                            <a href="/profil">
                                 <i class="bi bi-circle"></i><span>Profil Singkat</span>
                             </a>
                         </li>
                         <li>
-                            <a href="http://127.0.0.1:8000/fasilitas">
+                            <a href="/fasilitas">
                                 <i class="bi bi-circle"></i><span>Fasilitas</span>
                             </a>
                         </li>
@@ -124,12 +124,12 @@
                     </a>
                     <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
                         <li>
-                            <a href="http://127.0.0.1:8000/pesan">
+                            <a href="/pesan">
                                 <i class="bi bi-circle"></i><span>Pesan Masuk</span>
                             </a>
                         </li>
                         <li>
-                            <a href="http://127.0.0.1:8000/faq">
+                            <a href="/faq">
                                 <i class="bi bi-circle"></i><span>FAQ</span>
                             </a>
                         </li>
@@ -142,12 +142,12 @@
                     </a>
                     <ul id="charts-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
                         <li>
-                            <a href="http://127.0.0.1:8000/hima">
+                            <a href="/hima">
                                 <i class="bi bi-circle"></i><span>Info Hima</span>
                             </a>
                         </li>
                         <li>
-                            <a href="http://127.0.0.1:8000/kabinet">
+                            <a href="/kabinet">
                                 <i class="bi bi-circle"></i><span>Kabinet</span>
                             </a>
                         </li>
@@ -160,12 +160,12 @@
                     </a>
                     <ul id="icons-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
                         <li>
-                            <a href="http://127.0.0.1:8000/photo">
+                            <a href="/photo">
                                 <i class="bi bi-circle"></i><span>Foto</span>
                             </a>
                         </li>
                         <li>
-                            <a href="http://127.0.0.1:8000/video">
+                            <a href="/video">
                                 <i class="bi bi-circle"></i><span>Video</span>
                             </a>
                         </li>
@@ -173,14 +173,14 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link collapsed" href="http://127.0.0.1:8000/agenda">
+                    <a class="nav-link collapsed" href="/agenda">
                       <i class="bi bi-calendar-week"></i>
                       <span>Agenda</span>
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link collapsed" href="http://127.0.0.1:8000/kontak">
+                    <a class="nav-link collapsed" href="/kontak">
                       <i class="bi bi-person-plus"></i>
                       <span>Kontak</span>
                     </a>
@@ -211,7 +211,7 @@
                 <hr>
 
                 <li class="nav-item">
-                    <a class="nav-link collapsed" href="http://127.0.0.1:8000/logout">
+                    <a class="nav-link collapsed" href="/logout">
                       <i class="bi bi-box-arrow-right"></i>
                       <span>Logout</span>
                     </a>
