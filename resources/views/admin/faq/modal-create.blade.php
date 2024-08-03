@@ -1,0 +1,107 @@
+<!-- Modal -->
+<div class="modal fade" id="modal-create" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">TAMBAH ALUMNI</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formData" enctype="multipart/form-data" method="post">
+                    @csrf
+                    <div class="form-group">
+                        <label for="name" class="control-label">Pertanyaan</label>
+                        <input type="text" class="form-control" id="pertanyaan" name="pertanyaan">
+                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-pertanyaan"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="name" class="control-label">Jawaban</label>
+                        <input type="text" class="form-control" id="jawaban" name="jawaban">
+                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-jawaban"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="admin_id" class="control-label">Admin</label>
+                        <select name="admin_id" id="admin_id" class="form-select" required>
+                            @foreach($users as $user)
+                             <option value="{{$user->id}}">{{$user->name}}</option>
+                             @endforeach
+                         </select>
+                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-admin_id"></div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">TUTUP</button>
+                        <button type="submit" class="btn btn-primary" id="store">SIMPAN</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Show modal on button click
+    $('#btn-create-post').on('click', function() {
+        $('#modal-create').modal('show');
+    });
+
+    // Handle form submission
+    $('#formData').on('submit', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        var data = new FormData(this);
+        data.append('pertanyaan', $('#pertanyaan').val());
+        data.append('jawaban', $('#jawaban').val());
+        data.append('admin_id', $('#admin_id').val());
+
+        $.ajax({
+            url: '/api/faqs', // Update the URL to the API endpoint
+            type: 'POST',
+            data: data,
+            cache: false,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Data berhasil disimpan',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+
+                let faq = `
+                    <tr>
+                        <td>${response.data.id}</td>
+                        <td>${response.data.pertanyaan}</td>
+                        <td>${response.data.jawaban}</td>
+                        <td class="text-center" style="padding-right:10px">
+                            <a href="javascript:void(0)" data-id="${response.data.id}" class="button-edit btn btn-sm">edit</a>
+                        </td>
+                    </tr>
+                `;
+                $('#table-faqs').append(faq); // Append the new row to the end of the table
+                                // Update the row numbers
+                $('#table-faqs tr').each(function(index) {
+                    $(this).find('td:first').text(index + 1);
+                });
+
+                $('#modal-create').modal('hide');
+                $('#formData')[0].reset();
+            },
+            error: function(error) {
+                // Handle error
+                if (error.responseJSON.pertanyaan) {
+                    $('#alert-pertanyaan').removeClass('d-none').html(error.responseJSON.pertanyaan[0]);
+                }
+                if (error.responseJSON.jawaban) {
+                    $('#alert-jawaban').removeClass('d-none').html(error.responseJSON.jawaban[0]);
+                }
+                if (error.responseJSON.admin_id) {
+                    $('#alert-admin_id').removeClass('d-none').html(error.responseJSON.admin_id[0]);
+                }
+            }
+        });
+    });
+</script>
