@@ -14,6 +14,20 @@
         body {
             background-color: rgb(255, 255, 255) !important;
         }
+        td {
+            max-width: 400px; /* Sesuaikan dengan lebar kolom */
+            white-space: normal; /* Mengizinkan teks untuk membungkus */
+            height: auto;
+        }
+
+        td.deskripsi  {
+
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 5;
+            overflow: hidden;
+
+        }
     </style>
 
     <!-- Load jQuery, Bootstrap and other dependencies in correct order -->
@@ -36,7 +50,12 @@
 
                 <a href="javascript:void(0)" class="button-tambah ms-1 float-end" id="btn-create-post">Tambah</a>
             </div>
-           {{-- {{ var_dump($alumnis) }} --}}
+
+            @if($dataKosong)
+                <div class="alert alert-warning mt-4" role="alert">
+                    Data tidak ditemukan.
+                </div>
+            @else
             <table class="table">
                 <thead>
                     <tr>
@@ -57,7 +76,7 @@
                         <td>{{$alumni->nama}}</td>
                         <td>{{$alumni->generasi}}</td>
                         <td>{{$alumni->pekerjaan}}</td>
-                        <td>{{$alumni->deskripsi}}</td>
+                        <td class="deskripsi">{{$alumni->deskripsi}}</td>
                         <td>{{$alumni->kompetensi}}</td>
                         <td><img src="{{ url('/storage/foto/'.$alumni->foto) }}" width="100" height="100"/></td>
                         <td class="text-center" style="padding-right:10px"> <a href="javascript:void(0)" id="btn-edit-post" data-id="{{ $alumni->id }}" class="button-edit btn btn-sm">edit</a> </td>
@@ -66,6 +85,10 @@
                     @endforeach
                 </tbody>
             </table>
+            @endif
+            @include('admin.alumni.modal-create')
+            @include('admin.alumni.modal-update')
+
             <nav aria-label="Page navigation">
                 <ul class="pagination">
                     <!-- Previous Page Link -->
@@ -89,7 +112,6 @@
         </div>
     </div>
 </main><!-- End #main -->
-@include('admin.alumni.modal-create')
-@include('admin.alumni.modal-update')
+
 </body>
 </html>

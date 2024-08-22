@@ -31,7 +31,7 @@ class KurikulumController extends Controller
             'jam_teori' => 'required',
             'sks_prak' => 'required',
             'jam_prak' => 'required',
-            'deskripsi' => 'required'
+
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
@@ -45,7 +45,7 @@ class KurikulumController extends Controller
             'jam_teori' => $request-> jam_teori,
             'sks_prak' => $request-> sks_prak,
             'jam_prak' => $request-> jam_prak,
-            'deskripsi' => $request-> deskripsi,
+
         ]);
 
         return new ResponseResource(true, 'Data Berhasil Ditambahkan!', $kurikulum);
@@ -76,7 +76,7 @@ class KurikulumController extends Controller
             'jam_teori' => 'required',
             'sks_prak' => 'required',
             'jam_prak' => 'required',
-            'deskripsi' => 'required',
+
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 401);
@@ -84,7 +84,7 @@ class KurikulumController extends Controller
 
         else{
             $kurikulum = Kurikulum::find($id);
-            
+
             $kurikulum->update([
                 'kode_mk' => $request-> input('kode_mk'),
                 'nama_mk' => $request-> input('nama_mk'),
@@ -93,7 +93,7 @@ class KurikulumController extends Controller
                 'jam_teori' => $request-> input('jam_teori'),
                 'sks_prak' => $request-> input('sks_prak'),
                 'jam_prak' => $request-> input('jam_prak'),
-                'deskripsi' => $request-> deskripsi,
+               
             ]);
 
             if ($kurikulum) {

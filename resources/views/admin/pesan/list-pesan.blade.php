@@ -49,6 +49,12 @@
                             <input type="search" name="search" class="form-control" placeholder="Search ..." value="{{request('search')}}">
                         </form>
                     </div>
+
+                    @if($dataKosong)
+                        <div class="alert alert-warning mt-4" role="alert">
+                            Data tidak ditemukan.
+                        </div>
+                    @else
                     <table class="table">
                         <thead>
                             <tr>
@@ -71,6 +77,9 @@
                             @endforeach
                         </tbody>
                     </table>
+                    @include('admin.pesan.modal-update')
+                    @endif
+
                     <nav aria-label="Page navigation">
                         <ul class="pagination">
                             <!-- Previous Page Link -->
@@ -94,8 +103,36 @@
                 </div>
 
             </div>
+
+            <script>
+                $(document).ready(function () {
+                    let lastMessageId = null;
+
+                    // Fungsi untuk memeriksa pesan baru
+                    function checkNewMessages() {
+                        $.ajax({
+                            url: '/check-new-messages',
+                            method: 'GET',
+                            success: function (data) {
+                                if (data.latestMessage) {
+                                    if (lastMessageId === null) {
+                                        // Inisialisasi lastMessageId jika belum ada
+                                        lastMessageId = data.latestMessage.id;
+                                    } else if (data.latestMessage.id !== lastMessageId) {
+                                        // Jika ada pesan baru
+                                        alert('Ada pesan baru masuk!');
+                                        lastMessageId = data.latestMessage.id;
+                                    }
+                                }
+                            }
+                        });
+                    }
+
+                    // Periksa pesan baru setiap 10 detik
+                    setInterval(checkNewMessages, 10000);
+                });
+            </script>
         </main><!-- End #main -->
 
-    @include('admin.pesan.modal-update')
     </body>
 </html>

@@ -16,7 +16,6 @@ class Kurikulum extends Model
         'jam_teori',
         'sks_prak',
         'jam_prak',
-        'deskripsi',
 
     ];
 }

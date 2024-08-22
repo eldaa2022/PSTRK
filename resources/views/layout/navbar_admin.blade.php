@@ -24,10 +24,40 @@
         <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet">
         <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
         <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
         <!-- Template Main CSS File -->
         <link href="../assets/css/style.css" rel="stylesheet">
+        <style>
+            .notification-badge {
+                background-color: red;
+                color: white;
+                padding: 0 6px;
+                border-radius: 12px;
+                font-size: 12px;
+                display: inline-block;
+                margin-left: 10px;
+            }
 
+            .nav-item .nav-link {
+                position: relative;
+            }
+
+            .nav-item .nav-content li {
+                position: relative;
+            }
+
+            #menu-notification {
+                margin-left: auto;
+                margin-right: 10px;
+            }
+
+            #message-notification {
+                margin-left: auto;
+                margin-right: 10px;
+            }
+
+        </style>
     </head>
 
     <body>
@@ -70,7 +100,7 @@
 
                 <li class="nav-item">
                     <a class="nav-link collapsed" href="/jenis_konten">
-                      <i class="bi bi-person-plus"></i>
+                      <i class="bi bi-list-task"></i>
                       <span>Jenis Konten</span>
                     </a>
                 </li>
@@ -118,23 +148,76 @@
                     </ul>
                 </li>
 
-                <li class="nav-item"> <!--pesan-->
-                    <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
-                        <i class="bi bi-chat-square-text"></i><span>Pesan</span><i class="bi bi-chevron-down ms-auto"></i>
+                <li class="nav-item">
+                    <a class="nav-link collapsed d-flex align-items-center justify-content-between" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+                        <div>
+                            <i class="bi bi-chat-square-text"></i>
+                            <span>Pesan</span>
+                        </div>
+                        <span id="menu-notification" class="notification-badge">0</span>
+                        <i class="bi bi-chevron-down ms-auto"></i>
                     </a>
-                    <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                        <li>
-                            <a href="/pesan">
-                                <i class="bi bi-circle"></i><span>Pesan Masuk</span>
+                    <ul id="forms-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+                        <li class="d-flex align-items-center justify-content-between">
+                            <a href="/pesan" class="d-flex align-items-center" id="pesan-masuk-link">
+                                <i class="bi bi-circle"></i>
+                                <span>Pesan Masuk</span>
                             </a>
+                            <span id="message-notification" class="notification-badge">1</span>
                         </li>
+
                         <li>
                             <a href="/faq">
                                 <i class="bi bi-circle"></i><span>FAQ</span>
                             </a>
                         </li>
                     </ul>
+                    <script type="text/javascript">
+                        $(document).ready(function () {
+                        var lastCheckTime = localStorage.getItem('lastCheckTime') || new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+                        function updateMessageNotification() {
+                            $.ajax({
+                                url: '/count-new-messages',
+                                method: 'GET',
+                                data: { lastCheckTime: lastCheckTime },
+                                success: function (data) {
+                                    if (data.newMessagesCount > 0) {
+                                        $('#menu-notification').text(data.newMessagesCount).show();
+                                        $('#message-notification').text(data.newMessagesCount).show();
+                                    } else {
+                                        $('#menu-notification').hide();
+                                        $('#message-notification').hide();
+                                    }
+                                },
+                                error: function () {
+                                    console.error('Gagal mengambil data pesan baru.');
+                                }
+                            });
+                        }
+
+                        // Event handler untuk klik pada sub-menu "Pesan Masuk"
+                        $('#pesan-masuk-link').on('click', function () {
+                            $('#menu-notification').hide();
+                            $('#message-notification').hide();
+
+                            // Update waktu terakhir dicek
+                            lastCheckTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+                            localStorage.setItem('lastCheckTime', lastCheckTime);
+                        });
+
+                        // Memperbarui notifikasi secara berkala
+                        setInterval(updateMessageNotification, 10000);
+
+                        // Panggil fungsi ini saat pertama kali halaman dimuat
+                        updateMessageNotification();
+                    });
+
+
+                    </script>
                 </li>
+
+
 
                 <li class="nav-item"> <!--hima-->
                     <a class="nav-link collapsed" data-bs-target="#charts-nav" data-bs-toggle="collapse" href="#">
@@ -181,7 +264,7 @@
 
                 <li class="nav-item">
                     <a class="nav-link collapsed" href="/kontak">
-                      <i class="bi bi-person-plus"></i>
+                      <i class="bi bi-person-lines-fill"></i>
                       <span>Kontak</span>
                     </a>
                 </li>
@@ -209,6 +292,25 @@
                     </a>
                 </li>
                 <hr>
+
+                <li class="nav-item"> <!--galeri-->
+                    <a class="nav-link collapsed" data-bs-target="#sip-nav" data-bs-toggle="collapse" href="#">
+                        <i class="bi bi-archive"></i><span>Arsip</span><i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="sip-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                        <li>
+                            <a href="/arsipdosen">
+                                <i class="bi bi-circle"></i><span>Arsip Dosen</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/arsipkonten">
+                                <i class="bi bi-circle"></i><span>Arsip Konten</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
 
                 <li class="nav-item">
                     <a class="nav-link collapsed" href="/logout">
@@ -240,5 +342,8 @@
                 }
             });
         </script>
+
+
+
     </body>
 </html>

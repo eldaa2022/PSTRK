@@ -10,35 +10,16 @@
                 <form id="formData" enctype="multipart/form-data" method="post">
                     @csrf
                     <div class="form-group">
-                        <label for="email" class="control-label">Email</label>
-                        <input type="email" class="form-control" id="email" name="email">
-                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-email"></div>
+                        <label for="kontak" class="control-label">Data Kontak</label>
+                        <input type="text" class="form-control" id="kontak" name="kontak">
+                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-kontak"></div>
                     </div>
                     <div class="form-group">
-                        <label for="alamat" class="control-label">Alamat</label>
-                        <input type="text" class="form-control" id="alamat" name="alamat">
-                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-alamat"></div>
+                        <label for="jenis_kontak" class="control-label">Jenis Kontak</label>
+                        <input type="text" class="form-control" id="jenis_kontak" name="jenis_kontak">
+                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-jenis_kontak"></div>
                     </div>
-                    <div class="form-group">
-                        <label for="no_tlp" class="control-label">No Telpon</label>
-                        <input type="text" class="form-control" id="no_tlp" name="no_tlp">
-                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-no_tlp"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="instagram" class="control-label">Instagram</label>
-                        <input type="text" class="form-control" id="instagram" name="instagram">
-                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-instagram"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="youtube" class="control-label">Youtube</label>
-                        <input type="text" class="form-control" id="youtube" name="youtube">
-                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-youtube"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="whatsapp" class="control-label">Whatsapp</label>
-                        <input type="text" class="form-control" id="whatsapp" name="whatsapp">
-                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-whatsapp"></div>
-                    </div>
+
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">TUTUP</button>
                         <button type="submit" class="btn btn-primary" id="store">SIMPAN</button>
@@ -77,22 +58,18 @@
                 });
 
                 // Calculate the new row number
-                let rowNumber = $('#table-kontaks tr').length;
+                let rowNumber = $('#table-kontaks tr').length + 1;
 
                 let kontak = `
                     <tr>
-                        <td>${rowNumber}</td>
-                        <td>${response.data.email}</td>
-                        <td>${response.data.alamat}</td>
-                        <td>${response.data.no_tlp}</td>
-                        <td>${response.data.instagram}</td>
-                        <td>${response.data.youtube}</td>
-                        <td>${response.data.whatsapp}</td>
-                        <td><a href="javascript:void(0)" id="btn-edit-post" data-id="${response.data.id}" class="button-edit btn btn-sm">edit</a></td>
+                        <td class="text-center">${rowNumber}</td>
+                        <td class="text-center">${response.data.kontak}</td>
+                        <td class="text-center">${response.data.jenis_kontak}</td>
+                        <td class="text-center"><a href="javascript:void(0)" id="btn-edit-post" data-id="${response.data.id}" class="button-edit btn btn-sm">edit</a></td>
                     </tr>
                 `;
 
-                $('#table-kontaks').prepend(kontak); // Append the new row to the end of the table
+                $('#table-kontaks').prepend(kontak);
 
                 // Update the row numbers
                 $('#table-kontaks tr').each(function(index) {
@@ -103,11 +80,10 @@
                 $('#formData')[0].reset();
             },
             error: function(error) {
-                // Handle error
-                const errorFields = ['email', 'alamat', 'no_tlp', 'instagram', 'youtube', 'whatsapp'];
+                const errorFields = ['kontak', 'jenis_kontak'];
                 errorFields.forEach(field => {
                     if (error.responseJSON[field]) {
-                        $(`#alert-${field}`).removeClass('d-none').html(error.responseJSON[field][0]);
+                        $(`#alert-${field}`).removeClass('d-none').html(`${field.charAt(0).toUpperCase() + field.slice(1)} harus diisi.`);
                     } else {
                         $(`#alert-${field}`).addClass('d-none');
                     }

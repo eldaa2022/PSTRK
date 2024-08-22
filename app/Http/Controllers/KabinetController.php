@@ -9,10 +9,22 @@ class KabinetController extends Controller
 {
     public function index(Request $request)
     {
-        $kabinets = Kabinet::latest()->paginate(5);
-        if ($request ->has('search')) {
-            $kabinets = Kabinet::where('nama', 'like', '%'.$request->search.'%')->paginate(4);
+        $kabinets = Kabinet::orderBy('nama', 'asc');
+        $search = $request->input('search');
+
+        if ($search) {
+            $kabinets->where(function($query) use ($search) {
+                $query->where('jabatan', 'like', '%' . $search . '%')
+                      ->orWhere('departemen', 'like', '%'.$search.'%')
+                      ->orWhere('nama', 'like', '%'.$search.'%')
+                      ->orWhere('tahun', 'like', '%'.$search.'%');
+            });
         }
-        return view('admin.hima.list-kabinet', compact('kabinets'));
+
+        $kabinets = $kabinets->latest()->paginate(4);
+
+        $dataKosong = $kabinets->isEmpty();
+
+        return view('admin.hima.list-kabinet', compact('kabinets', 'dataKosong'));
     }
 }

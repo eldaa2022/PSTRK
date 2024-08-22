@@ -14,6 +14,18 @@
             body {
                 background-color: rgb(255, 255, 255) !important;
             }
+            td {
+                max-width: 200px; /* Sesuaikan dengan lebar kolom */
+                white-space: normal; /* Mengizinkan teks untuk membungkus */
+            }
+
+            td.deskripsi {
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 3;
+                overflow: hidden;
+            }
+
         </style>
 
         <!-- Load jQuery, Bootstrap and other dependencies in correct order -->
@@ -36,6 +48,12 @@
 
                         <a href="javascript:void(0)" class="button-tambah ms-1 float-end" id="btn-create-post">Tambah</a>
                     </div>
+
+                    @if($dataKosong)
+                        <div class="alert alert-warning mt-4" role="alert">
+                            Data tidak ditemukan.
+                        </div>
+                    @else
                     <table class="table">
                         <thead>
                             <tr>
@@ -55,7 +73,7 @@
                         <tr id="index_{{ $agenda->id }}">
                                 <td style="text-align: center">{{ ($agendas->currentPage() - 1) * $agendas->perPage() + $loop->iteration }}</td>
                                 <td>{{$agenda->judul}}</td>
-                                <td>{{$agenda->deskripsi}}</td>
+                                <td class="deskripsi">{{$agenda->deskripsi}}</td>
                                 <td>{{$agenda->tgl_mulai}}</td>
                                 <td>{{$agenda->tgl_selesai}}</td>
                                 <td>{{$agenda->tags}}</td>
@@ -66,6 +84,12 @@
                             @endforeach
                         </tbody>
                     </table>
+
+                    @endif
+                    @include('admin.agenda.modal-create')
+                    @include('admin.agenda.modal-update')
+
+                    
                     <nav aria-label="Page navigation">
                         <ul class="pagination">
                             <!-- Previous Page Link -->
@@ -91,7 +115,6 @@
 
             </div>
         </main><!-- End #main -->
-        @include('admin.agenda.modal-create')
-        @include('admin.agenda.modal-update')
+
     </body>
 </html>

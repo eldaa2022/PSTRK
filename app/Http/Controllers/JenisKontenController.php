@@ -9,10 +9,21 @@ class JenisKontenController extends Controller
 {
     public function index(Request $request)
     {
-        $jenis_kontens = Jenis_konten::latest()->paginate(5);
-        if ($request ->has('search')) {
-            $jenis_kontens = Jenis_konten::where('jenis', 'like', '%'.$request->search.'%')->paginate(5);
+        $jenis_kontens = Jenis_konten::orderBy('created_at', 'desc');
+        $search = $request->input('search');
+
+        if ($search) {
+            $jenis_kontens->where(function($query) use ($search) {
+                $query->where('jenis', 'like', '%' . $search . '%');
+            });
         }
-        return view('admin.jeniskonten.list-jeniskonten', compact('jenis_kontens'));
+
+        $jenis_kontens = $jenis_kontens->latest()->paginate(5);
+
+        // Cek apakah hasil pencarian kosong
+        $dataKosong = $jenis_kontens->isEmpty();
+
+
+        return view('admin.jeniskonten.list-jeniskonten', compact('jenis_kontens', 'dataKosong'));
     }
 }

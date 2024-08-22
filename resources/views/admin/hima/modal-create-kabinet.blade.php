@@ -18,17 +18,17 @@
                     <div class="form-group">
                         <label for="name" class="control-label">Jabatan</label>
                         <input type="text" class="form-control" id="jabatan" name="jabatan">
-                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-nip"></div>
+                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-jabatan"></div>
                     </div>
                     <div class="form-group">
                         <label class="control-label">Departemen</label>
                         <input type="text" class="form-control" id="departemen" name="departemen">
-                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-email"></div>
+                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-departemen"></div>
                     </div>
                     <div class="form-group">
                         <label for="name" class="control-label">Tahun</label>
                         <input type="text" class="form-control" id="tahun" name="tahun">
-                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-kompetensi"></div>
+                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-tahun"></div>
                     </div>
                     <div class="form-group">
                         <label for="name" class="control-label">Foto</label>
@@ -44,6 +44,7 @@
         </div>
     </div>
 </div>
+
 <script>
     // Show modal on button click
     $('#btn-create-post').on('click', function() {
@@ -55,12 +56,39 @@
         e.preventDefault();
         e.stopPropagation();
 
+        // Reset all alert messages
+        $('.alert-danger').addClass('d-none').html('');
+
+        // Validasi input untuk memastikan tidak ada yang kosong
+        var isValid = true;
+
+        if ($('#nama').val().trim() === '') {
+            $('#alert-nama').removeClass('d-none').html('Nama tidak boleh kosong.');
+            isValid = false;
+        }
+        if ($('#jabatan').val().trim() === '') {
+            $('#alert-jabatan').removeClass('d-none').html('Jabatan tidak boleh kosong.');
+            isValid = false;
+        }
+        if ($('#departemen').val().trim() === '') {
+            $('#alert-departemen').removeClass('d-none').html('Departemen tidak boleh kosong.');
+            isValid = false;
+        }
+        if ($('#tahun').val().trim() === '') {
+            $('#alert-tahun').removeClass('d-none').html('Tahun tidak boleh kosong.');
+            isValid = false;
+        }
+        if ($('#foto')[0].files.length === 0) {
+            $('#alert-foto').removeClass('d-none').html('Foto harus diunggah.');
+            isValid = false;
+        }
+
+        // Jika validasi gagal, hentikan pengiriman formulir
+        if (!isValid) {
+            return;
+        }
+
         var data = new FormData(this);
-        data.append('nama', $('#nama').val());
-        data.append('jabatan', $('#jabatan').val());
-        data.append('departemen', $('#departemen').val());
-        data.append('tahun', $('#tahun').val());
-        data.append('foto', $('#foto')[0].files[0]);
         data.append('hima_id', '1'); // Assume '1' is the admin_id. Change as necessary.
 
         $.ajax({
@@ -89,44 +117,48 @@
                         <td style="text-align: center">${response.data.departemen}</td>
                         <td style="text-align: center">${response.data.tahun}</td>
                         <td><img src="{{ url('/storage/foto/') }}/${response.data.foto}" width=100 height=100></td>
-                        <td class="text-center" style="padding-right:10px"> <a href="javascript:void(0)" id="btn-edit-post" data-id="{{ $kabinet->id }}" class="button-edit btn btn-sm">edit</a> </td>
+                        <td class="text-center" style="padding-right:10px"> <a href="javascript:void(0)" id="btn-edit-post" data-id="${response.data.id}" class="button-edit btn btn-sm">edit</a> </td>
                     </tr>
                 `;
                 $('#table-kabinets').prepend(kabinet); // Append the new row to the end of the table
-                                // Update the row numbers
+
+                // Update the row numbers
                 $('#table-kabinets tr').each(function(index) {
                     $(this).find('td:first').text(index + 1);
                 });
+
                 $('#modal-create').modal('hide');
                 $('#formData')[0].reset();
             },
             error: function(error) {
-                // Handle error
-                if (error.responseJSON.nama) {
-                    $('#alert-nama').removeClass('d-none').html(error.responseJSON.nama[0]);
-                }
-                if (error.responseJSON.nip) {
-                    $('#alert-nip').removeClass('d-none').html(error.responseJSON.nip[0]);
-                }
-                if (error.responseJSON.email) {
-                    $('#alert-email').removeClass('d-none').html(error.responseJSON.email[0]);
-                }
-                if (error.responseJSON.kompetensi) {
-                    $('#alert-kompetensi').removeClass('d-none').html(error.responseJSON.kompetensi[0]);
-                }
-                if (error.responseJSON.matkul) {
-                    $('#alert-matkul').removeClass('d-none').html(error.responseJSON.matkul[0]);
-                }
-                if (error.responseJSON.status) {
-                    $('#alert-status').removeClass('d-none').html(error.responseJSON.status[0]);
-                }
-                if (error.responseJSON.lampiran) {
-                    $('#alert-lampiran').removeClass('d-none').html(error.responseJSON.lampiran[0]);
-                }
-                if (error.responseJSON.foto) {
-                    $('#alert-foto').removeClass('d-none').html(error.responseJSON.foto[0]);
+                // Handle server-side validation errors
+                if (error.responseJSON.errors) {
+                    if (error.responseJSON.errors.nama) {
+                        $('#alert-nama').removeClass('d-none').html(error.responseJSON.errors.nama[0]);
+                    }
+                    if (error.responseJSON.errors.jabatan) {
+                        $('#alert-jabatan').removeClass('d-none').html(error.responseJSON.errors.jabatan[0]);
+                    }
+                    if (error.responseJSON.errors.departemen) {
+                        $('#alert-departemen').removeClass('d-none').html(error.responseJSON.errors.departemen[0]);
+                    }
+                    if (error.responseJSON.errors.tahun) {
+                        $('#alert-tahun').removeClass('d-none').html(error.responseJSON.errors.tahun[0]);
+                    }
+                    if (error.responseJSON.errors.foto) {
+                        $('#alert-foto').removeClass('d-none').html(error.responseJSON.errors.foto[0]);
+                    }
                 }
             }
         });
+    });
+
+    // Hide alerts when the user starts typing or selects a file
+    $('#nama, #jabatan, #departemen, #tahun').on('input', function() {
+        $(this).next('.alert-danger').addClass('d-none').html('');
+    });
+
+    $('#foto').on('change', function() {
+        $('#alert-foto').addClass('d-none').html('');
     });
 </script>

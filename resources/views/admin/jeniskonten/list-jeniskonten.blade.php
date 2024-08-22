@@ -37,6 +37,12 @@
 
                     <a href="javascript:void(0)" class="button-tambah ms-1 float-end" id="btn-create-post">Tambah</a>
                 </div>
+
+                @if($dataKosong)
+                    <div class="alert alert-warning mt-4" role="alert">
+                        Data tidak ditemukan.
+                    </div>
+                @else
                 <table class="table">
                     <thead>
                         <tr>
@@ -57,6 +63,11 @@
                         @endforeach
                     </tbody>
                 </table>
+                @endif
+                @include('admin.jeniskonten.modal-create')
+                @include('admin.jeniskonten.modal-update')
+
+                
                 <nav aria-label="Page navigation">
                     <ul class="pagination">
                         <!-- Previous Page Link -->
@@ -80,7 +91,6 @@
             </div>
         </div>
     </main><!-- End #main -->
-    @include('admin.jeniskonten.modal-create')
-    @include('admin.jeniskonten.modal-update')
+
     </body>
 </html>

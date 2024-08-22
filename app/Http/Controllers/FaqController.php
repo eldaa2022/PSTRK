@@ -16,13 +16,16 @@ class FaqController extends Controller
                     ->select('faqs.*');
 
         if ($request->has('search')) {
-            $query->where('faqs.pertanyaan', 'like', '%'.$request->search.'%');
+            $query->where('faqs.pertanyaan', 'like', '%'.$request->search.'%')
+            ->orWhere('faqs.jawaban', 'like', '%'.$request->search.'%');
         }
 
         $faqs = $query->paginate(5);
+        $dataKosong = $faqs->isEmpty();
+
         $users = User::all();
 
-        return view('admin.faq.list-faq', compact('faqs','users'));
+        return view('admin.faq.list-faq', compact('faqs','users', 'dataKosong'));
     }
 
 

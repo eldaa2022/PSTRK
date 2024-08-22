@@ -15,6 +15,22 @@
         body {
             background-color: rgb(255, 255, 255) !important;
         }
+        td {
+            max-width: 400px; /* Sesuaikan dengan lebar kolom */
+            white-space: normal; /* Mengizinkan teks untuk membungkus */
+        }
+
+        td.misi  , .deskripsi   {
+
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 5;
+            overflow: hidden;
+            border: none;
+        }
+
+
+
     </style>
 
     <!-- Load jQuery, Bootstrap and other dependencies in correct order -->
@@ -38,15 +54,21 @@
                         <a href="javascript:void(0)" class="button-tambah ms-1 float-end" id="btn-create-post">Tambah</a>
 
                     </div>
+
+                    @if($dataKosong)
+                        <div class="alert alert-warning mt-4" role="alert">
+                            Data tidak ditemukan.
+                        </div>
+                    @else
                     <table class="table">
                         <thead>
                             <tr>
                                 <th scope="col">No.</th>
                                 <th scope="col">Nama</th>
                                 <th scope="col">Sejarah</th>
+                                <th scope="col">Deskripsi</th>
                                 <th scope="col">Visi</th>
                                 <th scope="col">Misi</th>
-                                <th scope="col">Deskripsi</th>
                                 <th scope="col">Foto</th>
                                 <th scope="col">Aksi</th>
                             </tr>
@@ -56,16 +78,21 @@
                             <tr id="index_{{$hima->id}}" >
                                 <td>{{$hima->id}}</td>
                                 <td>{{$hima->nama}}</td>
-                                <td class="text-limit">{{$hima->sejarah}}</td>
-                                <td class="text-limit">{{$hima->visi}}</td>
-                                <td class="text-limit">{{$hima->misi}}</td>
-                                <td class="text-limit">{{$hima->deskripsi}}</td>
+                                <td class="sejarah">{{$hima->sejarah}}</td>
+                                <td class="deskripsi">{{$hima->deskripsi}}</td>
+                                <td class="visi">{{$hima->visi}}</td>
+                                <td class="misi">{{$hima->misi}}</td>
                                 <td><img src="{{ url('/storage/foto/'.$hima->foto) }}" width="100" height="100"/></td>
                                 <td class="text-center" style="padding-right:10px"> <a href="javascript:void(0)" id="btn-edit-post" data-id="{{ $hima->id }}" class="button-edit btn btn-sm">edit</a> </td>
                             </tr>
                             @endforeach
                         </tbody>
                     </table>
+
+                    @endif
+                    @include('admin.hima.modal-create-hima')
+                    @include('admin.hima.modal-update-hima')
+
                 </div>
 
                 <nav aria-label="Page navigation">
@@ -90,9 +117,5 @@
                 </nav>
             </div>
         </main><!-- End #main -->
-
-        @include('admin.hima.modal-create-hima')
-        @include('admin.hima.modal-update-hima')
-        
     </body>
 </html>

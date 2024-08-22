@@ -3,33 +3,33 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Edit Kabinet </h5>
+                <h5 class="modal-title" id="exampleModalLabel">Edit Kabinet</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="formData" enctype="multipart/form-data" method="POST">
+                <form id="formEditData" enctype="multipart/form-data" method="POST">
                     @method('PUT')
-                    <input type="hidden" id="post_id">
+                    <input type="hidden" id="post_id" name="post_id">
                     @csrf
                     <div class="form-group">
                         <label for="nama-edit" class="control-label">Nama Anggota</label>
-                        <input type="text" class="form-control" id="nama-edit" name="nama-edit">
-                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-kode_mk-edit"></div>
+                        <input type="text" class="form-control" id="nama-edit" name="nama">
+                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-nama-edit"></div>
                     </div>
                     <div class="form-group">
                         <label for="jabatan-edit" class="control-label">Jabatan</label>
-                        <input type="text" class="form-control" id="jabatan-edit" name="jabatan-edit">
-                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-kode_mk-edit"></div>
+                        <input type="text" class="form-control" id="jabatan-edit" name="jabatan">
+                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-jabatan-edit"></div>
                     </div>
                     <div class="form-group">
                         <label for="departemen-edit" class="control-label">Departemen</label>
-                        <input type="text" class="form-control" id="departemen-edit" name="departemen-edit">
-                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-kode_mk-edit"></div>
+                        <input type="text" class="form-control" id="departemen-edit" name="departemen">
+                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-departemen-edit"></div>
                     </div>
                     <div class="form-group">
                         <label for="tahun-edit" class="control-label">Tahun</label>
-                        <input type="text" class="form-control" id="tahun-edit" name="tahun-edit">
-                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-kode_mk-edit"></div>
+                        <input type="text" class="form-control" id="tahun-edit" name="tahun">
+                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-tahun-edit"></div>
                     </div>
                     <div class="form-group">
                         <label for="foto-edit" class="control-label">Foto</label>
@@ -41,7 +41,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">TUTUP</button>
-                <button type="submit" class="btn btn-primary" id="update" data-bs-dismiss="modal">UPDATE</button>
+                <button type="submit" class="btn btn-primary" id="update">UPDATE</button>
             </div>
         </div>
     </div>
@@ -80,19 +80,44 @@
             e.preventDefault();
             e.stopPropagation();
 
+            // Reset all alert messages
+            $('.alert-danger').addClass('d-none').html('');
+
+            // Validate inputs
+            let isValid = true;
+
+            if ($('#nama-edit').val().trim() === '') {
+                $('#alert-nama-edit').removeClass('d-none').html('Nama Anggota tidak boleh kosong.');
+                isValid = false;
+            }
+            if ($('#jabatan-edit').val().trim() === '') {
+                $('#alert-jabatan-edit').removeClass('d-none').html('Jabatan tidak boleh kosong.');
+                isValid = false;
+            }
+            if ($('#departemen-edit').val().trim() === '') {
+                $('#alert-departemen-edit').removeClass('d-none').html('Departemen tidak boleh kosong.');
+                isValid = false;
+            }
+            if ($('#tahun-edit').val().trim() === '') {
+                $('#alert-tahun-edit').removeClass('d-none').html('Tahun tidak boleh kosong.');
+                isValid = false;
+            }
+
+            // Jika validasi gagal, hentikan pengiriman formulir
+            if (!isValid) {
+                return;
+            }
+
             let post_id = $('#post_id').val();
-            var formData = new FormData($('#formData')[0]);
+            var formData = new FormData($('#formEditData')[0]);
 
             var foto = $('#foto-edit')[0].files[0];
             if (foto) {
                 formData.append('foto', foto);
             }
-            formData.append('_token', $('input[name=_token]').val());
+
+            // Append additional data
             formData.append('_method', 'PUT');
-            formData.append('nama', $('#nama-edit').val());
-            formData.append('jabatan', $('#jabatan-edit').val());
-            formData.append('departemen', $('#departemen-edit').val());
-            formData.append('tahun', $('#tahun-edit').val());
 
             // Update data via AJAX
             $.ajax({
@@ -127,10 +152,41 @@
                     $(`#index_${response.data.id}`).replaceWith(updatedRow);
 
                     // Clear form and hide modal
-                    $('#formData')[0].reset();
+                    $('#formEditData')[0].reset();
                     $('#modal-edit').modal('hide');
+                },
+                error: function(xhr){
+                    // Parse JSON error messages
+                    var err = JSON.parse(xhr.responseText);
+                    if (err.errors) {
+                        if (err.errors.nama) {
+                            $('#alert-nama-edit').removeClass('d-none').html(err.errors.nama[0]);
+                        }
+                        if (err.errors.jabatan) {
+                            $('#alert-jabatan-edit').removeClass('d-none').html(err.errors.jabatan[0]);
+                        }
+                        if (err.errors.departemen) {
+                            $('#alert-departemen-edit').removeClass('d-none').html(err.errors.departemen[0]);
+                        }
+                        if (err.errors.tahun) {
+                            $('#alert-tahun-edit').removeClass('d-none').html(err.errors.tahun[0]);
+                        }
+                        if (err.errors.foto) {
+                            $('#alert-foto-edit').removeClass('d-none').html(err.errors.foto[0]);
+                        }
+                    }
                 }
             });
+        });
+
+        // Hide alert when user starts typing
+        $('#formEditData input').on('input', function() {
+            $(this).next('.alert').addClass('d-none').html('');
+        });
+
+        // Hide alert when file input changes
+        $('#foto-edit').on('change', function() {
+            $('#alert-foto-edit').addClass('d-none').html('');
         });
     });
 </script>

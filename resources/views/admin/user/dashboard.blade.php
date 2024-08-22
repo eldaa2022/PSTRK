@@ -1,4 +1,4 @@
-@extends('layout.sidebar_admin')
+@extends('layout.navbar_admin')
 
 <!DOCTYPE html>
 <html lang="en">
@@ -9,6 +9,7 @@
 
     <link href="../assets/css/style.css" rel="stylesheet">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -18,6 +19,9 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+
     <style>
         .search-bar-container {
             position: absolute;
@@ -44,6 +48,7 @@
     <main id="main" class="main">
         <div class="container">
             <div class="row">
+                
                 <!-- Kolom pertama -->
                 <div class="col-8">
                     <div class="row">
@@ -156,11 +161,6 @@
             </div>
         </div>
     </div>
-        <!-- Include chart scripts -->
-        <script src="{{ $chart1->cdn() }}"></script>
-        {{ $chart1->script() }}
-        <script src="{{ $chart2->cdn() }}"></script>
-        {{ $chart2->script() }}
 
 
     </main>
@@ -168,6 +168,11 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Include chart scripts -->
+    <script src="{{ $chart1->cdn() }}"></script>
+    {{ $chart1->script() }}
+    <script src="{{ $chart2->cdn() }}"></script>
+    {{ $chart2->script() }}
 
 
 </body>

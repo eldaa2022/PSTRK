@@ -12,11 +12,23 @@ class HimaController extends Controller
 {
     public function index(Request $request)
     {
-        $himas = Hima::latest()->paginate(5);
-        if ($request ->has('search')) {
-            $himas = Hima::where('sejarah', 'like', '%'.$request->search.'%')->paginate(5);
+        $himas = Hima::orderBy('nama', 'asc');
+        $search = $request->input('search');
+
+        if ($search) {
+            $himas->where(function($query) use ($search) {
+                $query->where('sejarah', 'like', '%' . $search . '%')
+                      ->orWhere('visi', 'like', '%'.$search.'%')
+                      ->orWhere('misi', 'like', '%'.$search.'%')
+                      ->orWhere('deskripsi', 'like', '%'.$search.'%');
+            });
         }
-        return view('admin.hima.list-hima', compact('himas'));
+
+        $himas = $himas->latest()->paginate(4);
+
+        $dataKosong = $himas->isEmpty();
+
+        return view('admin.hima.list-hima', compact('himas', 'dataKosong'));
     }
 
     //pengguna

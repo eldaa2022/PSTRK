@@ -13,6 +13,34 @@ use Illuminate\Http\Request;
 
 class KontenController extends Controller
 {
+
+    public function arsip(Request $request)
+    {
+        $search = $request->input('search');
+
+        // Join antara tabel kontens dan jenis_kontens
+        $kontensQuery = Konten::join('jenis_kontens', 'kontens.jenis_id', '=', 'jenis_kontens.id')
+            ->where('kontens.status', 'Tidak Aktif')
+            ->select('kontens.*', 'jenis_kontens.jenis'); // Memilih kolom yang diperlukan, termasuk jenis
+
+        if ($search) {
+            $kontensQuery->where(function($query) use ($search) {
+                $query->where('kontens.judul', 'like', '%' . $search . '%')
+                    ->orWhere('kontens.deskripsi', 'like', '%' . $search . '%')
+                    ->orWhere('kontens.tgl_publish', 'like', '%' . $search . '%')
+                    ->orWhere('kontens.tags', 'like', '%' . $search . '%')
+                    ->orWhere('jenis_kontens.jenis', 'like', '%' . $search . '%'); // Mencari juga di kolom jenis
+            });
+        }
+
+        $kontens = $kontensQuery->latest()->paginate(4);
+        $jenis_kontens = Jenis_konten::all();
+        // Cek apakah hasil pencarian kosong
+        $dataKosong = $kontens->isEmpty();
+
+        return view('admin.arsip.arsipKonten', compact('kontens', 'dataKosong', 'jenis_kontens'));
+    }
+
     public function berita(Request $request)
     {
         $jenis = 'Berita';
@@ -20,17 +48,26 @@ class KontenController extends Controller
         $query = Konten::join('jenis_kontens', 'kontens.jenis_id', '=', 'jenis_kontens.id')
                     ->join('users', 'kontens.admin_id', '=', 'users.id')
                     ->where('jenis_kontens.jenis', $jenis)
+                    ->where('kontens.status', 'Aktif')
                     ->select('kontens.*');
 
+        // Jika ada pencarian, tambahkan kondisi pencarian pada query
         if ($request->has('search')) {
-            $query->where('kontens.judul', 'like', '%'.$request->search.'%');
+            $query->where(function($q) use ($request) {
+                $q->where('kontens.judul', 'like', '%'.$request->search.'%')
+                  ->orWhere('kontens.deskripsi', 'like', '%'.$request->search.'%')
+                  ->orWhere('kontens.tgl_publish', 'like', '%'.$request->search.'%')
+                  ->orWhere('kontens.tags', 'like', '%'.$request->search.'%');
+            });
         }
 
+
         $beritas = $query->paginate(5);
+        $dataKosong = $beritas->isEmpty();
         $users = User::all();
         $jenis_kontens = Jenis_konten::all();
 
-        return view('admin.konten.berita', compact('beritas', 'jenis_kontens', 'jenis', 'users'));
+        return view('admin.konten.berita', compact('beritas', 'jenis_kontens', 'jenis', 'users', 'dataKosong'));
     }
 
 
@@ -41,17 +78,26 @@ class KontenController extends Controller
                 $query = Konten::join('jenis_kontens', 'kontens.jenis_id', '=', 'jenis_kontens.id')
                     ->join('users', 'kontens.admin_id', '=', 'users.id')
                     ->where('jenis_kontens.jenis', $jenis)
+                    ->where('kontens.status', 'Aktif')
                     ->select('kontens.*');
 
+        // Jika ada pencarian, tambahkan kondisi pencarian pada query
         if ($request->has('search')) {
-            $query->where('kontens.judul', 'like', '%'.$request->search.'%');
+            $query->where(function($q) use ($request) {
+                $q->where('kontens.judul', 'like', '%'.$request->search.'%')
+                  ->orWhere('kontens.deskripsi', 'like', '%'.$request->search.'%')
+                  ->orWhere('kontens.tgl_publish', 'like', '%'.$request->search.'%')
+                  ->orWhere('kontens.tags', 'like', '%'.$request->search.'%');
+            });
         }
 
+
         $prestasis = $query->paginate(5);
+        $dataKosong = $prestasis->isEmpty();
         $users = User::all();
         $jenis_kontens = Jenis_konten::all();
 
-        return view('admin.konten.prestasi', compact('prestasis', 'jenis_kontens', 'jenis', 'users'));
+        return view('admin.konten.prestasi', compact('prestasis', 'jenis_kontens', 'jenis', 'users', 'dataKosong'));
     }
 
     public function kegiatan(Request $request)
@@ -61,17 +107,26 @@ class KontenController extends Controller
                 $query = Konten::join('jenis_kontens', 'kontens.jenis_id', '=', 'jenis_kontens.id')
                     ->join('users', 'kontens.admin_id', '=', 'users.id')
                     ->where('jenis_kontens.jenis', $jenis)
+                    ->where('kontens.status', 'Aktif')
                     ->select('kontens.*');
 
+        // Jika ada pencarian, tambahkan kondisi pencarian pada query
         if ($request->has('search')) {
-            $query->where('kontens.judul', 'like', '%'.$request->search.'%');
+            $query->where(function($q) use ($request) {
+                $q->where('kontens.judul', 'like', '%'.$request->search.'%')
+                  ->orWhere('kontens.deskripsi', 'like', '%'.$request->search.'%')
+                  ->orWhere('kontens.tgl_publish', 'like', '%'.$request->search.'%')
+                  ->orWhere('kontens.tags', 'like', '%'.$request->search.'%');
+            });
         }
 
+
         $kegiatans = $query->paginate(5);
+        $dataKosong = $kegiatans->isEmpty();
         $users = User::all();
         $jenis_kontens = Jenis_konten::all();
 
-        return view('admin.konten.kegiatan', compact('kegiatans', 'jenis_kontens', 'jenis', 'users'));
+        return view('admin.konten.kegiatan', compact('kegiatans', 'jenis_kontens', 'jenis', 'users', 'dataKosong'));
     }
 
     public function akreditasi(Request $request)
@@ -81,17 +136,26 @@ class KontenController extends Controller
                 $query = Konten::join('jenis_kontens', 'kontens.jenis_id', '=', 'jenis_kontens.id')
                     ->join('users', 'kontens.admin_id', '=', 'users.id')
                     ->where('jenis_kontens.jenis', $jenis)
+                    ->where('kontens.status', 'Aktif')
                     ->select('kontens.*');
 
+        // Jika ada pencarian, tambahkan kondisi pencarian pada query
         if ($request->has('search')) {
-            $query->where('kontens.judul', 'like', '%'.$request->search.'%');
+            $query->where(function($q) use ($request) {
+                $q->where('kontens.judul', 'like', '%'.$request->search.'%')
+                  ->orWhere('kontens.deskripsi', 'like', '%'.$request->search.'%')
+                  ->orWhere('kontens.tgl_publish', 'like', '%'.$request->search.'%')
+                  ->orWhere('kontens.tags', 'like', '%'.$request->search.'%');
+            });
         }
 
+
         $akreditasis = $query->paginate(5);
+        $dataKosong = $akreditasis->isEmpty();
         $users = User::all();
         $jenis_kontens = Jenis_konten::all();
 
-        return view('admin.konten.akreditasi', compact('akreditasis', 'jenis_kontens', 'jenis', 'users'));
+        return view('admin.konten.akreditasi', compact('akreditasis', 'jenis_kontens', 'jenis', 'users', 'dataKosong'));
     }
 
     public function fasilitas(Request $request)
@@ -101,17 +165,26 @@ class KontenController extends Controller
                 $query = Konten::join('jenis_kontens', 'kontens.jenis_id', '=', 'jenis_kontens.id')
                     ->join('users', 'kontens.admin_id', '=', 'users.id')
                     ->where('jenis_kontens.jenis', $jenis)
+                    ->where('kontens.status', 'Aktif')
                     ->select('kontens.*');
 
+        // Jika ada pencarian, tambahkan kondisi pencarian pada query
         if ($request->has('search')) {
-            $query->where('kontens.judul', 'like', '%'.$request->search.'%');
+            $query->where(function($q) use ($request) {
+                $q->where('kontens.judul', 'like', '%'.$request->search.'%')
+                  ->orWhere('kontens.deskripsi', 'like', '%'.$request->search.'%')
+                  ->orWhere('kontens.tgl_publish', 'like', '%'.$request->search.'%')
+                  ->orWhere('kontens.tags', 'like', '%'.$request->search.'%');
+            });
         }
 
+
         $fasilitass = $query->paginate(5);
+        $dataKosong = $fasilitass->isEmpty();
         $users = User::all();
         $jenis_kontens = Jenis_konten::all();
 
-        return view('admin.konten.fasilitas', compact('fasilitass', 'jenis_kontens', 'jenis', 'users'));
+        return view('admin.konten.fasilitas', compact('fasilitass', 'jenis_kontens', 'jenis', 'users', 'dataKosong'));
     }
 
     public function profil(Request $request)
@@ -121,38 +194,59 @@ class KontenController extends Controller
                 $query = Konten::join('jenis_kontens', 'kontens.jenis_id', '=', 'jenis_kontens.id')
                     ->join('users', 'kontens.admin_id', '=', 'users.id')
                     ->where('jenis_kontens.jenis', $jenis)
+                    ->where('kontens.status', 'Aktif')
                     ->select('kontens.*');
 
+        // Jika ada pencarian, tambahkan kondisi pencarian pada query
         if ($request->has('search')) {
-            $query->where('kontens.judul', 'like', '%'.$request->search.'%');
+            $query->where(function($q) use ($request) {
+                $q->where('kontens.judul', 'like', '%'.$request->search.'%')
+                  ->orWhere('kontens.deskripsi', 'like', '%'.$request->search.'%')
+                  ->orWhere('kontens.tgl_publish', 'like', '%'.$request->search.'%')
+                  ->orWhere('kontens.tags', 'like', '%'.$request->search.'%');
+            });
         }
 
+
         $profils = $query->paginate(5);
+        $dataKosong = $profils->isEmpty();
         $users = User::all();
         $jenis_kontens = Jenis_konten::all();
 
-        return view('admin.konten.profil', compact('profils', 'jenis_kontens', 'jenis', 'users'));
+        return view('admin.konten.profil', compact('profils', 'jenis_kontens', 'jenis', 'users', 'dataKosong'));
     }
 
     public function photo(Request $request)
     {
         $jenis = 'Foto';
 
-                $query = Konten::join('jenis_kontens', 'kontens.jenis_id', '=', 'jenis_kontens.id')
-                    ->join('users', 'kontens.admin_id', '=', 'users.id')
-                    ->where('jenis_kontens.jenis', $jenis)
-                    ->select('kontens.*');
+        // Inisialisasi query dengan filter jenis konten
+        $query = Konten::join('jenis_kontens', 'kontens.jenis_id', '=', 'jenis_kontens.id')
+            ->join('users', 'kontens.admin_id', '=', 'users.id')
+            ->where('jenis_kontens.jenis', $jenis)
+            ->where('kontens.status', 'Aktif') // Filter berdasarkan jenis konten 'Foto'
+            ->select('kontens.*');
 
+        // Jika ada pencarian, tambahkan kondisi pencarian pada query
         if ($request->has('search')) {
-            $query->where('kontens.judul', 'like', '%'.$request->search.'%');
+            $query->where(function($q) use ($request) {
+                $q->where('kontens.judul', 'like', '%'.$request->search.'%')
+                  ->orWhere('kontens.deskripsi', 'like', '%'.$request->search.'%')
+                  ->orWhere('kontens.tgl_publish', 'like', '%'.$request->search.'%')
+                  ->orWhere('kontens.tags', 'like', '%'.$request->search.'%');
+            });
         }
 
+        // Pagination dan pengambilan data
         $photos = $query->paginate(5);
+        $dataKosong = $photos->isEmpty();
         $users = User::all();
         $jenis_kontens = Jenis_konten::all();
 
-        return view('admin.konten.photo', compact('photos', 'jenis_kontens', 'jenis', 'users'));
+        // Return view dengan data yang telah difilter
+        return view('admin.konten.photo', compact('photos', 'jenis_kontens', 'jenis', 'users', 'dataKosong'));
     }
+
 
     public function video(Request $request)
     {
@@ -161,29 +255,39 @@ class KontenController extends Controller
                 $query = Konten::join('jenis_kontens', 'kontens.jenis_id', '=', 'jenis_kontens.id')
                     ->join('users', 'kontens.admin_id', '=', 'users.id')
                     ->where('jenis_kontens.jenis', $jenis)
+                    ->where('kontens.status', 'Aktif')
                     ->select('kontens.*');
 
+        // Jika ada pencarian, tambahkan kondisi pencarian pada query
         if ($request->has('search')) {
-            $query->where('kontens.judul', 'like', '%'.$request->search.'%');
+            $query->where(function($q) use ($request) {
+                $q->where('kontens.judul', 'like', '%'.$request->search.'%')
+                  ->orWhere('kontens.deskripsi', 'like', '%'.$request->search.'%')
+                  ->orWhere('kontens.tgl_publish', 'like', '%'.$request->search.'%')
+                  ->orWhere('kontens.tags', 'like', '%'.$request->search.'%');
+            });
         }
 
+
         $videos = $query->paginate(5);
+        $dataKosong = $videos->isEmpty();
         $users = User::all();
         $jenis_kontens = Jenis_konten::all();
 
-        return view('admin.konten.video', compact('videos', 'jenis_kontens', 'jenis', 'users'));
+        return view('admin.konten.video', compact('videos', 'jenis_kontens', 'jenis', 'users', 'dataKosong'));
     }
 
 
 
 
-        //pengguna
+        //pengunjung
         public function akreditasiPengunjung(Request $request)
         {
             $jenis = 'Akreditasi';
 
             $akreditasis = Konten::join('jenis_kontens', 'kontens.jenis_id', '=', 'jenis_kontens.id')
                         ->where('jenis_kontens.jenis', $jenis)
+                        ->where('kontens.status', 'Aktif')
                         ->select('kontens.*')->paginate(5);
 
             $jenis_kontens = Jenis_konten::all();
@@ -199,6 +303,7 @@ class KontenController extends Controller
 
             $fasilitass = Konten::join('jenis_kontens', 'kontens.jenis_id', '=', 'jenis_kontens.id')
                         ->where('jenis_kontens.jenis', $jenis)
+                        ->where('kontens.status', 'Aktif')
                         ->select('kontens.*')->paginate(5);
 
             $jenis_kontens = Jenis_konten::all();
@@ -214,6 +319,7 @@ class KontenController extends Controller
 
             $profils = Konten::join('jenis_kontens', 'kontens.jenis_id', '=', 'jenis_kontens.id')
                         ->where('jenis_kontens.jenis', $jenis)
+                        ->where('kontens.status', 'Aktif')
                         ->select('kontens.*')->paginate(5);
 
             $jenis_kontens = Jenis_konten::all();
@@ -243,6 +349,7 @@ class KontenController extends Controller
 
             $prestasis = Konten::join('jenis_kontens', 'kontens.jenis_id', '=', 'jenis_kontens.id')
                         ->where('jenis_kontens.jenis', $jenis)
+                        ->where('kontens.status', 'Aktif')
                         ->where('kontens.tags', $tags)
                         ->select('kontens.*')->paginate(5);
 
@@ -263,6 +370,7 @@ class KontenController extends Controller
 
             $prestasis = Konten::join('jenis_kontens', 'kontens.jenis_id', '=', 'jenis_kontens.id')
                         ->where('jenis_kontens.jenis', $jenis)
+                        ->where('kontens.status', 'Aktif')
                         ->where('kontens.tags', $tags)
                         ->select('kontens.*')->paginate(5);
 
@@ -282,6 +390,7 @@ class KontenController extends Controller
 
             $beritas = Konten::join('jenis_kontens', 'kontens.jenis_id', '=', 'jenis_kontens.id')
                         ->where('jenis_kontens.jenis', $jenis)
+                        ->where('kontens.status', 'Aktif')
                         ->where('kontens.tags', $tags)
                         ->select('kontens.*')->paginate(5);
 
@@ -302,6 +411,7 @@ class KontenController extends Controller
 
             $beritas = Konten::join('jenis_kontens', 'kontens.jenis_id', '=', 'jenis_kontens.id')
                         ->where('jenis_kontens.jenis', $jenis)
+                        ->where('kontens.status', 'Aktif')
                         ->where('kontens.tags', $tags)
                         ->select('kontens.*')->paginate(5);
 
@@ -322,6 +432,7 @@ class KontenController extends Controller
 
             $kegiatans = Konten::join('jenis_kontens', 'kontens.jenis_id', '=', 'jenis_kontens.id')
                         ->where('jenis_kontens.jenis', $jenis)
+                        ->where('kontens.status', 'Aktif')
                         ->where('kontens.tags', $tags)
                         ->select('kontens.*')->paginate(5);
 
@@ -342,6 +453,7 @@ class KontenController extends Controller
 
             $kegiatans = Konten::join('jenis_kontens', 'kontens.jenis_id', '=', 'jenis_kontens.id')
                         ->where('jenis_kontens.jenis', $jenis)
+                        ->where('kontens.status', 'Aktif')
                         ->where('kontens.tags', $tags)
                         ->select('kontens.*')->paginate(5);
 
@@ -361,7 +473,7 @@ class KontenController extends Controller
 
             $fotos = Konten::join('jenis_kontens', 'kontens.jenis_id', '=', 'jenis_kontens.id')
                         ->where('jenis_kontens.jenis', $jenis1)
-                        ->select('kontens.*')->paginate(5);
+                        ->select('kontens.*')->paginate(100);
 
             $beritas = Konten::join('jenis_kontens', 'kontens.jenis_id', '=', 'jenis_kontens.id')
                         ->where('jenis_kontens.jenis', $jenis2)
@@ -409,18 +521,74 @@ class KontenController extends Controller
             $berita = Konten::join('jenis_kontens', 'kontens.jenis_id', '=', 'jenis_kontens.id')
                             ->where('kontens.id', $id)
                             ->where('jenis_kontens.jenis', $jenis)
+                            ->where('kontens.status', 'Aktif')
                             ->select('kontens.*')
-                            ->firstOrFail(); // Menggunakan firstOrFail untuk menangani data tidak ditemukan
+                            ->firstOrFail();
+
+            // Data lain yang dibutuhkan
+            $beritas = Konten::join('jenis_kontens', 'kontens.jenis_id', '=', 'jenis_kontens.id')
+                            ->where('jenis_kontens.jenis', $jenis)
+                            ->select('kontens.*')->paginate(5);
 
             $jenis_kontens = Jenis_konten::all();
             $kontaks = Kontak::all();
             $pesans = Pesan::all();
             $agendas = Agenda::all();
 
-            return view('pengunjung.berita-detail', compact('berita', 'jenis_kontens', 'kontaks', 'pesans', 'agendas'));
+            return view('pengunjung.berita-detail', compact('berita', 'jenis_kontens', 'kontaks', 'pesans', 'agendas', 'beritas'));
         }
 
+        public function prestasiDetail($id)
+        {
+            $jenis = 'Prestasi';
+            $jenis2 = 'Berita';
 
+            // Ambil berita berdasarkan ID
+            $prestasi = Konten::join('jenis_kontens', 'kontens.jenis_id', '=', 'jenis_kontens.id')
+                            ->where('kontens.id', $id)
+                            ->where('jenis_kontens.jenis', $jenis)
+                            ->where('kontens.status', 'Aktif')
+                            ->select('kontens.*')
+                            ->firstOrFail();
+
+            // Data lain yang dibutuhkan
+            $beritas = Konten::join('jenis_kontens', 'kontens.jenis_id', '=', 'jenis_kontens.id')
+                            ->where('jenis_kontens.jenis', $jenis2)
+                            ->select('kontens.*')->paginate(5);
+
+            $jenis_kontens = Jenis_konten::all();
+            $kontaks = Kontak::all();
+            $pesans = Pesan::all();
+            $agendas = Agenda::all();
+
+            return view('pengunjung.prestasi-detail', compact('prestasi', 'jenis_kontens', 'kontaks', 'pesans', 'agendas', 'beritas'));
+        }
+
+        public function kegiatanDetail($id)
+        {
+            $jenis = 'Kegiatan';
+            $jenis2 = 'Berita';
+
+            // Ambil berita berdasarkan ID
+            $kegiatan = Konten::join('jenis_kontens', 'kontens.jenis_id', '=', 'jenis_kontens.id')
+                            ->where('kontens.id', $id)
+                            ->where('jenis_kontens.jenis', $jenis)
+                            ->where('kontens.status', 'Aktif')
+                            ->select('kontens.*')
+                            ->firstOrFail();
+
+            // Data lain yang dibutuhkan
+            $beritas = Konten::join('jenis_kontens', 'kontens.jenis_id', '=', 'jenis_kontens.id')
+                            ->where('jenis_kontens.jenis', $jenis2)
+                            ->select('kontens.*')->paginate(5);
+
+            $jenis_kontens = Jenis_konten::all();
+            $kontaks = Kontak::all();
+            $pesans = Pesan::all();
+            $agendas = Agenda::all();
+
+            return view('pengunjung.kegiatan-detail', compact('kegiatan', 'jenis_kontens', 'kontaks', 'pesans', 'agendas', 'beritas'));
+        }
 
 
 }

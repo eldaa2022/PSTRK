@@ -20,7 +20,6 @@ return new class extends Migration
             $table->integer('jam_teori');
             $table->integer('sks_prak');
             $table->integer('jam_prak');
-            $table->longText('deskripsi');
             $table->timestamps();
         });
     }

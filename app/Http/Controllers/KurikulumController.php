@@ -11,14 +11,29 @@ class KurikulumController extends Controller
 {
     public function index(Request $request)
     {
-        $kurikulums = Kurikulum::latest()->paginate(5);
+        $kurikulums = Kurikulum::orderBy('smstr', 'asc');
+        $search = $request->input('search');
 
-        if ($request ->has('search')) {
-            $kurikulums = Kurikulum::where('nama_mk', 'like', '%'.$request->search.'%')->paginate(5);
+        if ($search) {
+            $kurikulums->where(function($query) use ($search) {
+                $query->where('nama_mk', 'like', '%' . $search . '%')
+                      ->orWhere('kode_mk', 'like', '%'.$search.'%')
+                      ->orWhere('smstr', 'like', '%'.$search.'%')
+                      ->orWhere('sks_teori', 'like', '%'.$search.'%')
+                      ->orWhere('jam_teori', 'like', '%'.$search.'%')
+                      ->orWhere('sks_prak', 'like', '%'.$search.'%')
+                      ->orWhere('jam_prak', 'like', '%'.$search.'%');
+            });
         }
 
-        return view('admin.kurikulum.list-kurikulum', compact('kurikulums'));
+        $kurikulums = $kurikulums->latest()->paginate(4);
+
+        // Cek apakah hasil pencarian kosong
+        $dataKosong = $kurikulums->isEmpty();
+
+        return view('admin.kurikulum.list-kurikulum', compact('kurikulums', 'dataKosong'));
     }
+
 
 
 

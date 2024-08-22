@@ -24,24 +24,17 @@ class KontakController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required',
-            'alamat' => 'required',
-            'no_tlp' => 'required',
-            'instagram' => 'required',
-            'youtube' => 'required',
-            'whatsapp' => 'required',
+            'kontak' => 'required',
+            'jenis_kontak' => 'required',
+
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
         $kontak = Kontak::create([
-            'email' => $request-> email,
-            'alamat' => $request-> alamat,
-            'no_tlp' => $request-> no_tlp,
-            'instagram' => $request-> instagram,
-            'youtube' => $request-> youtube,
-            'whatsapp' => $request-> whatsapp
+            'kontak' => $request-> kontak,
+            'jenis_kontak' => $request-> jenis_kontak,
         ]);
 
         return new ResponseResource(true, 'Data Berhasil Ditambahkan!', $kontak);
@@ -65,12 +58,9 @@ class KontakController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required',
-            'alamat' => 'required',
-            'no_tlp' => 'required',
-            'instagram' => 'required',
-            'youtube' => 'required',
-            'whatsapp' => 'required',
+            'kontak' => 'required',
+            'jenis_kontak' => 'required',
+
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 401);
@@ -79,12 +69,9 @@ class KontakController extends Controller
             $kontak = Kontak::find($id);
 
             $kontak->update([
-                'email' => $request-> input('email'),
-                'alamat' => $request-> input('alamat'),
-                'no_tlp' => $request-> input('no_tlp'),
-                'instagram' => $request-> input('instagram'),
-                'youtube' => $request-> input('youtube'),
-                'whatsapp' => $request-> input('whatsapp')
+                'kontak' => $request-> input('kontak'),
+                'jenis_kontak' => $request-> input('jenis_kontak'),
+
             ]);
 
             if ($kontak) {

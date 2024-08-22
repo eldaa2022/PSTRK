@@ -9,11 +9,25 @@ class AgendaController extends Controller
 {
     public function index(Request $request)
     {
-        $agendas = Agenda::latest()->paginate(5);
-        if ($request ->has('search')) {
-            $agendas = Agenda::where('judul', 'like', '%'.$request->search.'%')->paginate(5);
+        $agendas = Agenda::orderBy('tgl_mulai', 'asc');
+        $search = $request->input('search');
+
+        if ($search) {
+            $agendas->where(function($query) use ($search) {
+                $query->where('judul', 'like', '%' . $search . '%')
+                      ->orWhere('deskripsi', 'like', '%'.$search.'%')
+                      ->orWhere('tgl_mulai', 'like', '%'.$search.'%')
+                      ->orWhere('tgl_selesai', 'like', '%'.$search.'%')
+                      ->orWhere('tags', 'like', '%'.$search.'%')
+                      ->orWhere('lokasi', 'like', '%'.$search.'%')
+                      ->orWhere('penyelenggara', 'like', '%'.$search.'%');
+            });
         }
 
-        return view('admin.agenda.list-agenda', compact('agendas'));
+        $agendas = $agendas->latest()->paginate(4);
+
+        $dataKosong = $agendas->isEmpty();
+
+        return view('admin.agenda.list-agenda', compact('agendas', 'dataKosong'));
     }
 }

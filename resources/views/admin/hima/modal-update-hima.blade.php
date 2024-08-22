@@ -3,11 +3,11 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Edit hima</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Edit Himpunan</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="formData" enctype="multipart/form-data" method="POST">
+                <form id="formEditData" enctype="multipart/form-data" method="POST">
                     @method('PUT')
                     <input type="hidden" id="post_id" name="post_id">
                     @csrf
@@ -51,6 +51,7 @@
         </div>
     </div>
 </div>
+
 <script>
     $(document).ready(function(){
         // Event handler for edit button
@@ -85,8 +86,40 @@
             e.preventDefault();
             e.stopPropagation();
 
-            let post_id = $('#post_id').val();
-            var formData = new FormData($('#formData')[0]);
+            // Reset all alert messages
+            $('.alert-danger').addClass('d-none').html('');
+
+            // Validate inputs
+            let isValid = true;
+
+            if ($('#nama-edit').val().trim() === '') {
+                $('#alert-nama-edit').removeClass('d-none').html('Nama Himpunan tidak boleh kosong.');
+                isValid = false;
+            }
+            if ($('#sejarah-edit').val().trim() === '') {
+                $('#alert-sejarah-edit').removeClass('d-none').html('Sejarah Himpunan tidak boleh kosong.');
+                isValid = false;
+            }
+            if ($('#visi-edit').val().trim() === '') {
+                $('#alert-visi-edit').removeClass('d-none').html('Visi Himpunan tidak boleh kosong.');
+                isValid = false;
+            }
+            if ($('#misi-edit').val().trim() === '') {
+                $('#alert-misi-edit').removeClass('d-none').html('Misi Himpunan tidak boleh kosong.');
+                isValid = false;
+            }
+            if ($('#deskripsi-edit').val().trim() === '') {
+                $('#alert-deskripsi-edit').removeClass('d-none').html('Deskripsi Himpunan tidak boleh kosong.');
+                isValid = false;
+            }
+
+            // Jika validasi gagal, hentikan pengiriman formulir
+            if (!isValid) {
+                return;
+            }
+
+            var post_id = $('#post_id').val();
+            var formData = new FormData($('#formEditData')[0]);
 
             var foto = $('#foto-edit')[0].files[0];
             if (foto) {
@@ -94,18 +127,12 @@
             }
 
             // Append additional data
-            formData.append('_token', $('input[name=_token]').val());
             formData.append('_method', 'PUT');
-            formData.append('nama', $('#nama-edit').val());
-            formData.append('sejarah', $('#sejarah-edit').val());
-            formData.append('visi', $('#visi-edit').val());
-            formData.append('misi', $('#misi-edit').val());
-            formData.append('deskripsi', $('#deskripsi-edit').val());
 
             // Update data via AJAX
             $.ajax({
                 url: '/api/himas/' + post_id,
-                type: "POST",
+                type: "POST", // Make sure the server accepts POST for updates if not using PUT
                 data: formData,
                 processData: false,
                 contentType: false,
@@ -118,7 +145,7 @@
                     });
 
                     // Update the corresponding row in the table
-                    let updatedRow = `
+                    let hima = `
                     <tr id="index_${response.data.id}">
                         <td style="text-align: center">${response.data.id}</td>
                         <td style="text-align: center">${response.data.nama}</td>
@@ -126,23 +153,54 @@
                         <td style="text-align: center">${response.data.visi}</td>
                         <td style="text-align: center">${response.data.misi}</td>
                         <td style="text-align: center">${response.data.deskripsi}</td>
-                        <td><img src="{{ url('/storage/foto/') }}/${response.data.foto}" width=100 height=100></td>                        <td class="text-center" style="padding-right:10px">
+                        <td><img src="{{ url('/storage/foto/') }}/${response.data.foto}" width=100 height=100></td>
+                        <td class="text-center" style="padding-right:10px">
                             <a href="javascript:void(0)" id="btn-edit-post" data-id="${response.data.id}" class="button-edit btn btn-sm">edit</a>
                         </td>
                     </tr>
                     `;
 
-                    $(`#index_${response.data.id}`).replaceWith(updatedRow);
+                    $(`#index_${response.data.id}`).replaceWith(hima);
 
                     // Clear form and hide modal
-                    $('#formData')[0].reset();
+                    $('#formEditData')[0].reset();
                     $('#modal-edit').modal('hide');
                 },
-                error: function(xhr, status, error) {
+                error: function(xhr){
+                    // Parse JSON error messages
                     var err = JSON.parse(xhr.responseText);
-                    console.log(err);
+                    if (err.errors) {
+                        if (err.errors.nama) {
+                            $('#alert-nama-edit').removeClass('d-none').html(err.errors.nama[0]);
+                        }
+                        if (err.errors.sejarah) {
+                            $('#alert-sejarah-edit').removeClass('d-none').html(err.errors.sejarah[0]);
+                        }
+                        if (err.errors.visi) {
+                            $('#alert-visi-edit').removeClass('d-none').html(err.errors.visi[0]);
+                        }
+                        if (err.errors.misi) {
+                            $('#alert-misi-edit').removeClass('d-none').html(err.errors.misi[0]);
+                        }
+                        if (err.errors.deskripsi) {
+                            $('#alert-deskripsi-edit').removeClass('d-none').html(err.errors.deskripsi[0]);
+                        }
+                        if (err.errors.foto) {
+                            $('#alert-foto-edit').removeClass('d-none').html(err.errors.foto[0]);
+                        }
+                    }
                 }
             });
+        });
+
+        // Hide alert when user starts typing
+        $('#formEditData input').on('input', function() {
+            $(this).next('.alert').addClass('d-none').html('');
+        });
+
+        // Hide alert when file input changes
+        $('#foto-edit').on('change', function() {
+            $('#alert-foto-edit').addClass('d-none').html('');
         });
     });
 </script>

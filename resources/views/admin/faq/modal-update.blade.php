@@ -14,18 +14,19 @@
                     <div class="form-group">
                         <label for="pertanyaan-edit" class="control-label">Pertanyaan</label>
                         <input type="text" class="form-control" id="pertanyaan-edit" name="pertanyaan-edit">
-                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-kode_mk-edit"></div>
+                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-pertanyaan-edit"></div>
                     </div>
                     <div class="form-group">
                         <label for="jawaban-edit" class="control-label">Jawaban</label>
                         <input type="text" class="form-control" id="jawaban-edit" name="jawaban-edit">
-                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-kode_mk-edit"></div>
+                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-jawaban-edit"></div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">TUTUP</button>
-                <button type="submit" class="btn btn-primary" id="update" data-bs-dismiss="modal">UPDATE</button>
+                <!-- Removed data-bs-dismiss="modal" -->
+                <button type="submit" class="btn btn-primary" id="update">UPDATE</button>
             </div>
         </div>
     </div>
@@ -60,6 +61,26 @@
         $('#update').click(function(e) {
             e.preventDefault();
             e.stopPropagation();
+
+            // Reset all alert messages
+            $('.alert-danger').addClass('d-none').html('');
+
+            // Validate inputs
+            let isValid = true;
+
+            if ($('#pertanyaan-edit').val().trim() === '') {
+                $('#alert-pertanyaan-edit').removeClass('d-none').html('Pertanyaan tidak boleh kosong.');
+                isValid = false;
+            }
+            if ($('#jawaban-edit').val().trim() === '') {
+                $('#alert-jawaban-edit').removeClass('d-none').html('Jawaban tidak boleh kosong.');
+                isValid = false;
+            }
+
+            // Jika validasi gagal, hentikan pengiriman formulir
+            if (!isValid) {
+                return;
+            }
 
             let post_id = $('#post_id').val();
             var form = new FormData();
@@ -101,8 +122,24 @@
                     // Clear form and hide modal
                     $('#formData')[0].reset();
                     $('#modal-edit').modal('hide');
+                },
+                error: function(error){
+                    // Handle error response
+                    if (error.responseJSON.errors) {
+                        if (error.responseJSON.errors.pertanyaan) {
+                            $('#alert-pertanyaan-edit').removeClass('d-none').html(error.responseJSON.errors.pertanyaan[0]);
+                        }
+                        if (error.responseJSON.errors.jawaban) {
+                            $('#alert-jawaban-edit').removeClass('d-none').html(error.responseJSON.errors.jawaban[0]);
+                        }
+                    }
                 }
             });
+        });
+
+        // Hide alerts when the user starts typing
+        $('#pertanyaan-edit, #jawaban-edit').on('input', function() {
+            $(this).next('.alert-danger').addClass('d-none').html('');
         });
     });
 </script>

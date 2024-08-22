@@ -285,7 +285,7 @@ h6 {
     .navmenu .active,
     .navmenu .active:focus {
         color: var(--nav-hover-color);
-        font-weight: bold
+
     }
 
     .navmenu .dropdown ul {
@@ -2000,13 +2000,13 @@ section,
     border-radius: 10px;
     flex-direction: row;
     align-items: stretch;
-    max-height: 300px;
+    max-height: 220px;
 
 }
 .prestasi-card img {
     object-fit: cover;
     width: 35%;
-    height: 300px;
+    height: 220px;
 
 }
 .prestasi-card-content {
@@ -2020,7 +2020,7 @@ section,
 .prestasi-card-content .desk{
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 5; /* Limits the text to 2 lines */
+    -webkit-line-clamp: 3; /* Limits the text to 2 lines */
     overflow: hidden; /* Hides the rest of the text */
     text-overflow: ellipsis;
     white-space: normal; /* Allows the text to wrap */
@@ -2072,7 +2072,7 @@ section,
 }
 
 .prestasi-card-kecil img {
-    height: 200px;
+    height: 240px;
 }
 
 .link-lihat {
@@ -2106,8 +2106,12 @@ section,
     height: 328px;
 }
 .berita-card-kecil img {
-    height: 60%;
+    width: 100%; /* atau 60% sesuai kebutuhan */
+    height: 200px; /* Tentukan tinggi sesuai kebutuhan */
+    object-fit: cover;
+    object-position: center; /* Memastikan bagian tengah gambar yang ditampilkan */
 }
+
 
 .vidio {
     background-color: #023802;
@@ -2165,7 +2169,7 @@ section,
     align-content: center;
 }
 
-.small-video img {
+.small-video video {
     width: 36%;
     height: 60px;
     border-radius: 10px;
@@ -2638,7 +2642,9 @@ p {
     text-decoration: underline;
 }
 
-.galeri-container {
+/* ------------------------------------------------------------------------------------------------------------ */
+
+.galeri-container-foto {
     display: flex;
     flex-wrap: wrap;
     gap: 16px; /* Jarak antara item */
@@ -2648,62 +2654,85 @@ p {
     flex: 0 0 calc(33.333% - 16px); /* Mengatur 3 item per baris dengan jarak 16px */
     box-sizing: border-box;
     position: relative;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Menambahkan bayangan tipis */
+    border-radius: 10px; /* Jika ingin sudut card juga membulat */
+    overflow: hidden; /* Agar bayangan mengikuti bentuk card */
+    transition: box-shadow 0.3s ease; /* Menambahkan transisi halus saat ada interaksi */
 }
+.galeri-item:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Bayangan lebih besar saat hover */
+}
+
 
 .galeri-image {
     width: 100%;
-    height: 200px; /* Ukuran gambar tetap 200x200 px */
+    height: 150px; /* Ukuran gambar tetap 200x200 px */
     overflow: hidden;
     cursor: pointer;
-    position: relative;
 }
 
 .galeri-image img {
     width: 100%;
     height: 100%;
+    border-radius: 10px 10px 0 0;
     object-fit: cover; /* Mengubah ukuran gambar sesuai dengan kontainer tanpa merusak rasio aspek */
 }
 
 .galeri-info-foto {
-    position: absolute;
-    bottom: 0;
-    left: 0;
     width: 100%;
-    background-color: #023802c4; /* Background warna biru dengan opacity */
-    color: white;
+    background-color: #fff; /* Background warna biru dengan opacity */
+    color: #023802;
     text-align: left;
     padding: 10px;
     box-sizing: border-box;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-.galeri-info-foto h6 p {
-    color: white;
+    border-radius: 0 0 10px 10px;
+    /* Tidak lagi menggunakan position absolute dan opacity */
 }
 
-.galeri-item:hover .galeri-info-foto .galeri-video-info {
-    opacity: 1;
-}
-.galeri-item:hover .galeri-video-info {
-    opacity: 1;
+.galeri-info-foto h6, .galeri-info-foto p {
+    margin-bottom: 6px;
+    color: #023802;
 }
 
-.galeri-video-info {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 88%;
-    background-color: #023802c4; /* Background warna biru dengan opacity */
-    color: white;
+
+
+.galeri-container-video {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px; /* Jarak antara item */
+}
+
+.galeri-video {
+    width: 100%;
+    height: 150px; /* Ukuran gambar tetap 200x200 px */
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.galeri-video video {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px 10px 0 0;
+    object-fit: cover; /* Mengubah ukuran gambar sesuai dengan kontainer tanpa merusak rasio aspek */
+}
+
+.galeri-info-video {
+    width: 100%;
+    background-color: #fff; /* Background warna biru dengan opacity */
+    color: #023802;
     text-align: left;
     padding: 10px;
     box-sizing: border-box;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    border-radius: 0 0 10px 10px;
+    /* Tidak lagi menggunakan position absolute dan opacity */
 }
-.galeri-video-info h6 p {
-    color: white;
+
+.galeri-info-video h6, .galeri-info-video p {
+    margin-bottom: 6px;
+    color: #023802;
 }
+
+/* ----------------------------------------------------------------------------------------- */
 
 .card-dosen {
     position: relative;

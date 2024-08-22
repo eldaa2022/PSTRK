@@ -9,10 +9,21 @@ class KontakController extends Controller
 {
     public function index(Request $request)
     {
-        $kontaks = Kontak::latest()->paginate(5);
-        if ($request ->has('search')) {
-            $kontaks = Kontak::where('email', 'like', '%'.$request->search.'%')->paginate(5);
+        $kontaks = Kontak::orderBy('created_at', 'desc');
+        $search = $request->input('search');
+
+        if ($search) {
+            $kontaks->where(function($query) use ($search) {
+                $query->where('kontak', 'like', '%' . $search . '%')
+                      ->orWhere('jenis_kontak', 'like', '%'.$search.'%');
+            });
         }
-        return view('admin.kontak.list-kontak', compact('kontaks'));
+
+        $kontaks = $kontaks->latest()->paginate(4);
+
+        // Cek apakah hasil pencarian kosong
+        $dataKosong = $kontaks->isEmpty();
+
+        return view('admin.kontak.list-kontak', compact('kontaks', 'dataKosong'));
     }
 }

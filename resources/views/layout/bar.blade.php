@@ -70,7 +70,7 @@
 
                 <li class="nav-item">
                     <a class="nav-link collapsed" href="/jenis_konten">
-                      <i class="bi bi-person-plus"></i>
+                      <i class="bi bi-list-task"></i>
                       <span>Jenis Konten</span>
                     </a>
                 </li>
@@ -181,7 +181,7 @@
 
                 <li class="nav-item">
                     <a class="nav-link collapsed" href="/kontak">
-                      <i class="bi bi-person-plus"></i>
+                      <i class="bi bi-person-lines-fill"></i>
                       <span>Kontak</span>
                     </a>
                 </li>
@@ -210,6 +210,23 @@
                 </li>
                 <hr>
 
+                <li class="nav-item"> <!--galeri-->
+                    <a class="nav-link collapsed" data-bs-target="#sip-nav" data-bs-toggle="collapse" href="#">
+                        <i class="bi bi-archive"></i><span>Arsip</span><i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="sip-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                        <li>
+                            <a href="/arsipdosen">
+                                <i class="bi bi-circle"></i><span>Arsip Dosen</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/arsipkonten">
+                                <i class="bi bi-circle"></i><span>Arsip Konten</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link collapsed" href="/logout">
                       <i class="bi bi-box-arrow-right"></i>

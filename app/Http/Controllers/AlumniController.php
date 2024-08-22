@@ -18,13 +18,18 @@ class AlumniController extends Controller
                     ->select('alumnis.*');
 
         if ($request->has('search')) {
-            $query->where('alumnis.nama', 'like', '%'.$request->search.'%');
+            $query->where('alumnis.nama', 'like', '%'.$request->search.'%')
+            ->orWhere('alumnis.pekerjaan', 'like', '%'.$request->search.'%')
+            ->orWhere('alumnis.kompetensi', 'like', '%'.$request->search.'%')
+            ->orWhere('alumnis.deskripsi', 'like', '%'.$request->search.'%')
+            ->orWhere('alumnis.generasi', 'like', '%'.$request->search.'%');
         }
 
         $alumnis = $query->paginate(5);
+        $dataKosong = $alumnis->isEmpty();
         $users = User::all();
 
-        return view('admin.alumni.list-alumni', compact('alumnis', 'users'));
+        return view('admin.alumni.list-alumni', compact('alumnis', 'users', 'dataKosong'));
     }
 
     //pengguna

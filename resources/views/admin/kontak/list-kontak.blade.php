@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>DATA KURIKULUM</title>
+    <title>DATA KONTAK</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -37,16 +37,18 @@
 
                         <a href="javascript:void(0)" class="button-tambah ms-1 float-end" id="btn-create-post">Tambah</a>
                     </div>
+
+                    @if($dataKosong)
+                        <div class="alert alert-warning mt-4" role="alert">
+                            Data tidak ditemukan.
+                        </div>
+                    @else
                     <table class="table">
                         <thead>
                             <tr>
                                 <th scope="col">No.</th>
-                                <th scope="col">Email</th>
-                                <th scope="col">Alamat</th>
-                                <th scope="col">No. Telepon</th>
-                                <th scope="col">Instagram</th>
-                                <th scope="col">Youtube</th>
-                                <th scope="col">Whatsapp</th>
+                                <th scope="col">Kontak</th>
+                                <th scope="col">Jenis Kontak</th>
                                 <th scope="col">Aksi</th>
                             </tr>
                         </thead>
@@ -54,18 +56,20 @@
                             @foreach ($kontaks as $index =>$kontak)
                             <tr id="index_{{ $kontak->id }}">
                                 <td style="text-align: center">{{ ($kontaks->currentPage() - 1) * $kontaks->perPage() + $loop->iteration }}</td>
-                                <td>{{$kontak->email}}</td>
-                                <td>{{$kontak->alamat}}</td>
-                                <td>{{$kontak->no_tlp}}</td>
-                                <td>{{$kontak->instagram}}</td>
-                                <td>{{$kontak->youtube}}</td>
-                                <td>{{$kontak->whatsapp}}</td>
+                                <td  style="text-align: center">{{$kontak->kontak}}</td>
+                                <td  style="text-align: center">{{$kontak->jenis_kontak}}</td>
                                 <td class="text-center" style="padding-right:10px"> <a href="javascript:void(0)" id="btn-edit-post" data-id="{{ $kontak->id }}" class="button-edit btn btn-sm">edit</a> </td>
                             </tr>
                             @endforeach
                         </tbody>
                     </table>
+
+                    @endif
+                    @include('admin.kontak.modal-create')
+                    @include('admin.kontak.modal-update')
                 </div>
+
+
                 <nav aria-label="Page navigation">
                     <ul class="pagination">
                         <!-- Previous Page Link -->
@@ -89,7 +93,6 @@
 
             </div>
         </main><!-- End #main -->
-        @include('admin.kontak.modal-create')
-        @include('admin.kontak.modal-update')
+
     </body>
 </html>

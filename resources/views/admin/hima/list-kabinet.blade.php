@@ -37,6 +37,12 @@
                         <a href="javascript:void(0)" class="button-tambah ms-1 float-end" id="btn-create-post">Tambah</a>
 
                     </div>
+
+                    @if($dataKosong)
+                        <div class="alert alert-warning mt-4" role="alert">
+                            Data tidak ditemukan.
+                        </div>
+                    @else
                     <table class="table">
                         <thead>
                             <tr>
@@ -63,6 +69,11 @@
                             @endforeach
                         </tbody>
                     </table>
+
+                    @endif
+                    @include('admin.hima.modal-create-kabinet')
+                    @include('admin.hima.modal-update-kabinet')
+
                     <nav aria-label="Page navigation">
                         <ul class="pagination">
                             <!-- Previous Page Link -->
@@ -87,8 +98,5 @@
 
             </div>
         </main><!-- End #main -->
-
-        @include('admin.hima.modal-create-kabinet')
-        @include('admin.hima.modal-update-kabinet')
     </body>
 </html>

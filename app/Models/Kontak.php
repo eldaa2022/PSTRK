@@ -9,12 +9,7 @@ class Kontak extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'email',
-        'alamat',
-        'no_tlp',
-        'instagram',
-        'youtube',
-        'whatsapp',
-
+        'kontak',
+        'jenis_kontak',
     ];
 }

@@ -104,7 +104,7 @@
                             <div class="card fasilitas-card">
                                 <img src="{{ url('/storage/foto/'.$fasilitas->lampiran) }}" class="img-fluid" alt="Main Image">
                                 <div class="card-body fasilitas-card-content">
-                                    <h4><a href="#">{{ $fasilitas->judul }}</a></h4>
+                                    <h4>{{ $fasilitas->judul }}</h4>
                                     <p>{{ $fasilitas->deskripsi }}</p>
                                 </div>
                             </div>
@@ -133,44 +133,74 @@
         <div class="col-lg-3 col-md-3 footer-links border-end ">
           <h4 class="text-light">Alamat</h4>
           <ul class="pe-4">
-            <li>
-              @foreach($kontaks as $kontak)
-                <p class="text-break alamat">
-                  {{ $kontak->alamat }}
-                </p>
-                @endforeach
-            </li>
-            {{-- <li><i class="bi bi-chevron-right"></i> <a href="#">About us</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Services</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Terms of service</a></li> --}}
-          </ul>
+            @foreach($kontaks as $kontak)
+                @if($kontak->jenis_kontak == 'Alamat')
+                    <li>
+                        <img src="assets/img/loc.png" alt="" width="26" height="26" class="me-2 mt-2 align-self-start">
+                        <p class="text-break alamat">{{ $kontak->kontak }}</p>
+                    </li>
+                @endif
+            @endforeach
+        </ul>
+
         </div>
 
         <div class="col-lg-3 col-md-3 footer-links border-end" >
           <h4 class="text-light">Kontak</h4>
           <ul>
             @foreach($kontaks as $kontak)
-            <li style="align-: center">{{ $kontak->no_tlp }}</li>
-            <li style="align-: center">{{ $kontak->whatsapp }}</li>
-            <li style="align-: center">{{ $kontak->email }}</li>
+                @if($kontak->jenis_kontak == 'Telepon')
+                    <li style="text-align: center">
+                        <img src="assets/img/telpon.webp" alt="" width="24" height="24" class="me-2">
+                         {{ $kontak->kontak }}
+                    </li>
+                @elseif($kontak->jenis_kontak == 'whatsapp')
+                    <li style="text-align: center">
+                        <img src="assets/img/wa.png" alt="" width="24" height="24" class="me-2">
+                        <a href="{{ $kontak->kontak }}" class="text-light" target="_blank">Whatsapp Admin</a>
+                    </li>
+                @elseif($kontak->jenis_kontak == 'Email')
+                    <li style="text-align: center">
+                        <img src="assets/img/mail.png" alt="" width="24" height="24" class="me-2">
+                        {{ $kontak->kontak }}
+                    </li>
+                @endif
             @endforeach
-          </ul>
+        </ul>
+
+
         </div>
 
         <div class="col-lg-3 col-md-12">
           <h4 class="text-light">Media Sosial</h4>
           <ul class="p-0 m-0">
             @foreach($kontaks as $kontak)
-            <li style="list-style: none" class="mb-2">
-                <img src="assets/img/youtube.png" alt="" width="24" height="24" class="m-1">
-                <a href="#" class="text-light">{{ $kontak->youtube }}</a>
-            </li>
-            <li style="list-style: none" class="mb-2">
-                <img src="assets/img/instagram.png" alt="" width="24" height="24" class="m-1">
-                <a href="#" class="text-light">{{ $kontak->instagram }}</a>
-            </li>
+                @if($kontak->jenis_kontak == 'Youtube')
+                    <li style="list-style: none" class="mb-2">
+                        <img src="assets/img/youtube.png" alt="" width="24" height="24" class="m-1">
+                        <a href="{{ $kontak->kontak }}" class="text-light" target="_blank">PSTRK Hebat</a>
+                    </li>
+                @elseif($kontak->jenis_kontak == 'Facebook')
+                    <li style="list-style: none" class="mb-2">
+                        <img src="assets/img/fb.png" alt="" width="24" height="24" class="m-1">
+                        <a href="{{ $kontak->kontak }}" class="text-light" target="_blank">PSTRK PCR</a>
+                    </li>
+                @elseif($kontak->jenis_kontak == 'Instagram' && strpos($kontak->kontak, 'hima') !== false)
+                    <li style="list-style: none" class="mb-2">
+                        <img src="assets/img/instagram.png" alt="" width="24" height="24" class="m-1">
+                        <a href="{{ $kontak->kontak }}" class="text-light" target="_blank">@himakom_pcr</a>
+                    </li>
+                @elseif($kontak->jenis_kontak == 'Instagram' && strpos($kontak->kontak, 'hebat') !== false)
+                    <li style="list-style: none" class="mb-2">
+                        <img src="assets/img/instagram.png" alt="" width="24" height="24" class="m-1">
+                        <a href="{{ $kontak->kontak }}" class="text-light" target="_blank">@pstrk_hebat</a>
+                    </li>
+                @endif
             @endforeach
-          </ul>
+        </ul>
+
+
+
         </div>
 
       </div>
@@ -178,42 +208,63 @@
   </footer>
 
 
-   <!-- Pop-up Button -->
-   <button class="btn btn-lg btn-pesan fixed-button" id="btn-create-post" data-bs-toggle="modal" data-bs-target="#pesanModal">
-    <i class="bi bi-chat-dots"></i>
-  </button>
 
-  <!-- Modal Structure -->
-  <div class="modal fade" id="pesanModal" tabindex="-1" aria-labelledby="pesanModalLabel" aria-hidden="true">
+<!-- Pop-up Button -->
+<button class="btn btn-lg btn-pesan fixed-button" id="btn-create-post" data-bs-toggle="modal" data-bs-target="#pesanModal">
+    <i class="bi bi-chat-dots"></i>
+</button>
+
+<!-- Modal Structure -->
+<div class="modal fade" id="pesanModal" tabindex="-1" aria-labelledby="pesanModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-      <div class="modal-content">
-        <form id="formData" method="post" action="{{ route('pesans.store') }}">
-          <div class="modal-header">
-            <h5 class="modal-title" id="pesanModalLabel">Kirim Pesan</h5>
-            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <div class="form-group">
-              <label for="email">Email</label>
-              <input type="email" class="form-control" id="email" name="email" required>
-            </div>
-            <div class="form-group">
-              <label for="isi_pesan">Pesan</label>
-              <textarea class="form-control" id="isi_pesan" name="isi_pesan" rows="4" required></textarea>
-            </div>
-            <div id="alert-email" class="alert alert-danger d-none"></div>
-            <div id="alert-isi_pesan" class="alert alert-danger d-none"></div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-            <button type="submit" class="btn btn-primary">Kirim</button>
-          </div>
-        </form>
-      </div>
+        <div class="modal-content">
+            <form id="formData" method="post" action="{{ route('pesans.store') }}">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="pesanModalLabel">Kirim Pesan</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="isi_pesan">Pesan</label>
+                        <textarea class="form-control" id="isi_pesan" name="isi_pesan" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block mt-3">Kirim</button>
+                    <div id="alert-email" class="alert alert-danger d-none"></div>
+                    <div id="alert-isi_pesan" class="alert alert-danger d-none"></div>
+                </div>
+                <div class="modal-footer d-block">
+                    <hr>
+                    <div class="text-center mt-3">
+                        atau hubungi melalui
+                    </div>
+                    <div class="text-center mt-3">
+                        @foreach($kontaks as $kontak)
+                        @if($kontak->jenis_kontak == 'whatsapp')
+                        <a href="{{ $kontak->kontak }}" target="_blank">
+                            <img src="assets/img/wa.png" alt="" width="30" height="30" class="me-2">
+                            Whatsapp Prodi
+                        </a>
+
+                        @elseif($kontak->jenis_kontak == 'Email' && strpos($kontak->kontak, 'pstrk@') !== false)
+                        <a href="{{ $kontak->kontak }}" target="_blank" class="ms-3">
+                            <img src="assets/img/mail.png" alt="" width="30" height="30" class="me-2">
+                            Email Prodi
+                        </a>
+                        @endif
+                        @endforeach
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
-  </div>
+</div>
+
 
   <!-- jQuery and Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>

@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\ResponseResource;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Foundation\Http\Middleware\ValidatePostSize;
 
 
 class KontenController extends Controller
@@ -27,11 +28,11 @@ class KontenController extends Controller
 {
     $validator = Validator::make($request->all(), [
         'judul' => 'required',
-        'deskripsi' => 'required',
+        'deskripsi' => 'nullable',
         'tgl_publish' => 'required',
         'tags' => 'required',
         'status' => 'required',
-        'lampiran' => 'sometimes|mimes:png,jpg,jpeg,svg,mp4,mov,ogg,qt|max:20000', // untuk foto dan video
+        'lampiran' => 'sometimes|mimes:png,jpg,jpeg,svg,mp4,mov,ogg,qt|max:50000', // untuk foto dan video
         'admin_id' => 'required',
         'jenis_id' => 'required',
     ]);
@@ -87,7 +88,7 @@ class KontenController extends Controller
 {
     $validator = Validator::make($request->all(), [
         'judul' => 'required',
-        'deskripsi' => 'required',
+        'deskripsi' => 'nullable',
         'tgl_publish' => 'required',
         'tags' => 'required',
         'status' => 'required',

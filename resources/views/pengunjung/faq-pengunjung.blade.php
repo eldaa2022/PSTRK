@@ -29,6 +29,23 @@
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <link href="../assets/css/main.css" rel="stylesheet">
 
+  <style>
+    .btn-block {
+    display: block;
+    width: 100%;
+}
+
+.modal-footer .text-center {
+    font-size: 14px;
+    color: #6c757d;
+}
+
+.modal-footer .text-center img {
+    margin: 0 10px;
+}
+
+  </style>
+
 </head>
 
 <body class="index-page">
@@ -144,44 +161,74 @@
         <div class="col-lg-3 col-md-3 footer-links border-end ">
           <h4 class="text-light">Alamat</h4>
           <ul class="pe-4">
-            <li>
-              @foreach($kontaks as $kontak)
-                <p class="text-break alamat">
-                  {{ $kontak->alamat }}
-                </p>
-                @endforeach
-            </li>
-            {{-- <li><i class="bi bi-chevron-right"></i> <a href="#">About us</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Services</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Terms of service</a></li> --}}
-          </ul>
+            @foreach($kontaks as $kontak)
+                @if($kontak->jenis_kontak == 'Alamat')
+                    <li>
+                        <img src="assets/img/loc.png" alt="" width="26" height="26" class="me-2 mt-2 align-self-start">
+                        <p class="text-break alamat">{{ $kontak->kontak }}</p>
+                    </li>
+                @endif
+            @endforeach
+        </ul>
+
         </div>
 
         <div class="col-lg-3 col-md-3 footer-links border-end" >
           <h4 class="text-light">Kontak</h4>
           <ul>
             @foreach($kontaks as $kontak)
-            <li style="align-: center">{{ $kontak->no_tlp }}</li>
-            <li style="align-: center">{{ $kontak->whatsapp }}</li>
-            <li style="align-: center">{{ $kontak->email }}</li>
+                @if($kontak->jenis_kontak == 'Telepon')
+                    <li style="text-align: center">
+                        <img src="assets/img/telpon.webp" alt="" width="24" height="24" class="me-2">
+                         {{ $kontak->kontak }}
+                    </li>
+                @elseif($kontak->jenis_kontak == 'whatsapp')
+                    <li style="text-align: center">
+                        <img src="assets/img/wa.png" alt="" width="24" height="24" class="me-2">
+                        <a href="{{ $kontak->kontak }}" class="text-light" target="_blank">Whatsapp Admin</a>
+                    </li>
+                @elseif($kontak->jenis_kontak == 'Email')
+                    <li style="text-align: center">
+                        <img src="assets/img/mail.png" alt="" width="24" height="24" class="me-2">
+                        {{ $kontak->kontak }}
+                    </li>
+                @endif
             @endforeach
-          </ul>
+        </ul>
+
+
         </div>
 
         <div class="col-lg-3 col-md-12">
           <h4 class="text-light">Media Sosial</h4>
           <ul class="p-0 m-0">
             @foreach($kontaks as $kontak)
-            <li style="list-style: none" class="mb-2">
-                <img src="assets/img/youtube.png" alt="" width="24" height="24" class="m-1">
-                <a href="#" class="text-light">{{ $kontak->youtube }}</a>
-            </li>
-            <li style="list-style: none" class="mb-2">
-                <img src="assets/img/instagram.png" alt="" width="24" height="24" class="m-1">
-                <a href="#" class="text-light">{{ $kontak->instagram }}</a>
-            </li>
+                @if($kontak->jenis_kontak == 'Youtube')
+                    <li style="list-style: none" class="mb-2">
+                        <img src="assets/img/youtube.png" alt="" width="24" height="24" class="m-1">
+                        <a href="{{ $kontak->kontak }}" class="text-light" target="_blank">PSTRK Hebat</a>
+                    </li>
+                @elseif($kontak->jenis_kontak == 'Facebook')
+                    <li style="list-style: none" class="mb-2">
+                        <img src="assets/img/fb.png" alt="" width="24" height="24" class="m-1">
+                        <a href="{{ $kontak->kontak }}" class="text-light" target="_blank">PSTRK PCR</a>
+                    </li>
+                @elseif($kontak->jenis_kontak == 'Instagram' && strpos($kontak->kontak, 'hima') !== false)
+                    <li style="list-style: none" class="mb-2">
+                        <img src="assets/img/instagram.png" alt="" width="24" height="24" class="m-1">
+                        <a href="{{ $kontak->kontak }}" class="text-light" target="_blank">@himakom_pcr</a>
+                    </li>
+                @elseif($kontak->jenis_kontak == 'Instagram' && strpos($kontak->kontak, 'hebat') !== false)
+                    <li style="list-style: none" class="mb-2">
+                        <img src="assets/img/instagram.png" alt="" width="24" height="24" class="m-1">
+                        <a href="{{ $kontak->kontak }}" class="text-light" target="_blank">@pstrk_hebat</a>
+                    </li>
+                @endif
             @endforeach
-          </ul>
+        </ul>
+
+
+
         </div>
 
       </div>
@@ -189,42 +236,66 @@
   </footer>
 
 
-   <!-- Pop-up Button -->
-   <button class="btn btn-lg btn-pesan fixed-button" id="btn-create-post" data-bs-toggle="modal" data-bs-target="#pesanModal">
+<!-- Pop-up Button -->
+<button class="btn btn-lg btn-pesan fixed-button" id="btn-create-post" data-bs-toggle="modal" data-bs-target="#pesanModal">
     <i class="bi bi-chat-dots"></i>
-  </button>
+</button>
 
-  <!-- Modal Structure -->
-  <div class="modal fade" id="pesanModal" tabindex="-1" aria-labelledby="pesanModalLabel" aria-hidden="true">
+<!-- Modal Structure -->
+<div class="modal fade" id="pesanModal" tabindex="-1" aria-labelledby="pesanModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-      <div class="modal-content">
-        <form id="formData" method="post" action="{{ route('pesans.store') }}">
-          <div class="modal-header">
-            <h5 class="modal-title" id="pesanModalLabel">Kirim Pesan</h5>
-            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <div class="form-group">
-              <label for="email">Email</label>
-              <input type="email" class="form-control" id="email" name="email" required>
-            </div>
-            <div class="form-group">
-              <label for="isi_pesan">Pesan</label>
-              <textarea class="form-control" id="isi_pesan" name="isi_pesan" rows="4" required></textarea>
-            </div>
-            <div id="alert-email" class="alert alert-danger d-none"></div>
-            <div id="alert-isi_pesan" class="alert alert-danger d-none"></div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-            <button type="submit" class="btn btn-primary">Kirim</button>
-          </div>
-        </form>
-      </div>
+        <div class="modal-content">
+            <form id="formData" method="post" action="{{ route('pesans.store') }}">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="pesanModalLabel">Kirim Pesan</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="isi_pesan">Pesan</label>
+                        <textarea class="form-control" id="isi_pesan" name="isi_pesan" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block mt-3">Kirim</button>
+                    <div id="alert-email" class="alert alert-danger d-none"></div>
+                    <div id="alert-isi_pesan" class="alert alert-danger d-none"></div>
+                </div>
+                <div class="modal-footer d-block">
+                    <hr>
+                    <div class="text-center mt-3">
+                        atau hubungi melalui
+                    </div>
+                    <div class="text-center mt-3">
+                        @foreach($kontaks as $kontak)
+                        @if($kontak->jenis_kontak == 'whatsapp')
+                        <a href="{{ $kontak->kontak }}" target="_blank">
+                            <img src="assets/img/wa.png" alt="" width="30" height="30" class="me-2">
+                            Whatsapp Prodi
+                        </a>
+
+                        @elseif($kontak->jenis_kontak == 'Email' && strpos($kontak->kontak, 'pstrk@') !== false)
+                        <a href="{{ $kontak->kontak }}" target="_blank" class="ms-3">
+                            <img src="assets/img/mail.png" alt="" width="30" height="30" class="me-2">
+                            Email Prodi
+                        </a>
+                        @endif
+                        @endforeach
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
-  </div>
+</div>
+
+
+
+
+
 
   <!-- jQuery and Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -235,65 +306,60 @@
 
   <script>
     $(document).ready(function () {
-      // Handle form submission
-      $('#formData').on('submit', function (e) {
-        e.preventDefault();
+  // Handle form submission
+  $('#formData').on('submit', function (e) {
+    e.preventDefault();
 
-        var formData = new FormData();
-        formData.append('email', $('#email').val());
-        formData.append('isi_pesan', $('#isi_pesan').val());
+    var formData = new FormData();
+    formData.append('email', $('#email').val());
+    formData.append('isi_pesan', $('#isi_pesan').val());
 
-        $.ajax({
-          url: '/api/pesans',
-          type: 'POST',
-          data: formData,
-          processData: false,
-          contentType: false,
-          success: function (response) {
+    // Include CSRF token if using Laravel
+    formData.append('_token', '{{ csrf_token() }}');
+
+    $.ajax({
+        url: '/api/pesans',
+        type: 'POST',
+        data: {
+            email: $('#email').val(),
+            isi_pesan: $('#isi_pesan').val()
+        },
+        success: function(response) {
             console.log('AJAX request succeeded:', response);
-
             Swal.fire({
-              icon: 'success',
-              title: 'Pesan berhasil dikirim',
-              showConfirmButton: false,
-              timer: 1500
+            icon: 'success',
+            title: 'Pesan berhasil dikirim',
+            showConfirmButton: false,
+            timer: 1500
             }).then(() => {
-              console.log('Swal callback triggered');
-
-              $('#pesanModal').modal('hide');
-              console.log('Modal hide called');
-
-              $('#formData')[0].reset();
-              $('#alert-email, #alert-isi_pesan').addClass('d-none');
-
-              setTimeout(() => {
-                console.log('Redirecting to dashboard');
-                window.location.href = "/faqPengunjung";
-              }, 500); // Delay to ensure modal is closed
+            $('#pesanModal').modal('hide');
+            $('#formData')[0].reset();
+            $('#alert-email, #alert-isi_pesan').addClass('d-none');
             });
-          },
-          error: function (xhr) {
+        },
+        error: function(xhr) {
             var errors = xhr.responseJSON.errors;
             console.log('AJAX request failed:', errors);
-
             $('#alert-email').toggleClass('d-none', !errors.email).text(errors.email ? errors.email[0] : '');
             $('#alert-isi_pesan').toggleClass('d-none', !errors.isi_pesan).text(errors.isi_pesan ? errors.isi_pesan[0] : '');
-          }
+        }
         });
-      });
-    });
+
+  });
+});
+
   </script>
 
   <!-- Vendor JS Files -->
-  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="assets/vendor/php-email-form/validate.js"></script>
+  <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="../assets/vendor/php-email-form/validate.js"></script>
   <script src="assets/vendor/aos/aos.js"></script>
-  <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
-  <script src="assets/vendor/waypoints/noframework.waypoints.js"></script>
-  <script src="assets/vendor/purecounter/purecounter_vanilla.js"></script>
-  <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
-  <script src="assets/vendor/imagesloaded/imagesloaded.pkgd.min.js"></script>
-  <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+  <script src="../assets/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="../assets/vendor/waypoints/noframework.waypoints.js"></script>
+  <script src="../assets/vendor/purecounter/purecounter_vanilla.js"></script>
+  <script src="../assets/vendor/swiper/swiper-bundle.min.js"></script>
+  <script src="../assets/vendor/imagesloaded/imagesloaded.pkgd.min.js"></script>
+  <script src="../assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 

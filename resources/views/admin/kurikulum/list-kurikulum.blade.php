@@ -37,6 +37,12 @@
 
                     <a href="javascript:void(0)" class="button-tambah ms-1 float-end" id="btn-create-post">Tambah</a>
                 </div>
+
+                @if($dataKosong)
+                    <div class="alert alert-warning mt-4" role="alert">
+                        Data tidak ditemukan.
+                    </div>
+                @else
                 <table class="table">
                     <thead>
                         <tr>
@@ -44,7 +50,6 @@
                             <th scope="col">Kode Matkul</th>
                             <th scope="col">Nama Matkul</th>
                             <th scope="col">Semester</th>
-                            <th scope="col">Deskripsi</th>
                             <th scope="col">SKS Teori</th>
                             <th scope="col">Jam Teori</th>
                             <th scope="col">SKS Praktikum</th>
@@ -59,7 +64,6 @@
                             <td>{{ $kurikulum->kode_mk }}</td>
                             <td>{{ $kurikulum->nama_mk }}</td>
                             <td>{{ $kurikulum->smstr }}</td>
-                            <td>{{ $kurikulum->deskripsi }}</td>
                             <td>{{ $kurikulum->sks_teori }}</td>
                             <td>{{ $kurikulum->jam_teori }}</td>
                             <td>{{ $kurikulum->sks_prak }}</td>
@@ -71,6 +75,11 @@
                         @endforeach
                     </tbody>
                 </table>
+
+                @endif
+                @include('admin.kurikulum.modal-create')
+                @include('admin.kurikulum.modal-update')
+
 
                 <nav aria-label="Page navigation">
                     <ul class="pagination">
@@ -95,7 +104,5 @@
             </div>
         </div>
     </main><!-- End #main -->
-    @include('admin.kurikulum.modal-create')
-    @include('admin.kurikulum.modal-update')
     </body>
 </html>

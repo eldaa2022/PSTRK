@@ -31,8 +31,12 @@
                         <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-tgl_publish"></div>
                     </div>
                     <div class="form-group">
-                        <label for="status" class="control-label">Status</label>
-                        <input type="text" class="form-control" id="status" name="status">
+                        <label for="name" class="control-label">Status</label>
+                        <select name="status" id="status" class="form-select" required>
+                            <option value="" selected disabled>Pilih Status</option>
+                            <option value="Aktif">Aktif</option>
+                            <option value="Tidak Aktif">Tidak Aktif</option>
+                        </select>
                         <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-status"></div>
                     </div>
                     <div class="form-group">
@@ -68,6 +72,7 @@
         </div>
     </div>
 </div>
+
 <script>
     $(document).ready(function() {
         // Show modal on button click
@@ -79,6 +84,50 @@
         $('#formData').on('submit', function(e) {
             e.preventDefault();
             e.stopPropagation();
+
+            // Reset all alert messages
+            $('.alert-danger').addClass('d-none').html('');
+
+            // Validate inputs
+            let isValid = true;
+
+            if ($('#judul').val().trim() === '') {
+                $('#alert-judul').removeClass('d-none').html('Judul tidak boleh kosong.');
+                isValid = false;
+            }
+            if ($('#deskripsi').val().trim() === '') {
+                $('#alert-deskripsi').removeClass('d-none').html('Deskripsi tidak boleh kosong.');
+                isValid = false;
+            }
+            if ($('#tags').val().trim() === '') {
+                $('#alert-tags').removeClass('d-none').html('Tags tidak boleh kosong.');
+                isValid = false;
+            }
+            if ($('#tgl_publish').val().trim() === '') {
+                $('#alert-tgl_publish').removeClass('d-none').html('Tanggal publish tidak boleh kosong.');
+                isValid = false;
+            }
+            if ($('#status').val() === null) {
+                $('#alert-status').removeClass('d-none').html('Status harus dipilih.');
+                isValid = false;
+            }
+            if ($('#lampiran').val().trim() === '') {
+                $('#alert-lampiran').removeClass('d-none').html('Lampiran tidak boleh kosong.');
+                isValid = false;
+            }
+            if ($('#jenis_id').val() === null) {
+                $('#alert-jenis').removeClass('d-none').html('Jenis konten harus dipilih.');
+                isValid = false;
+            }
+            if ($('#admin_id').val() === null) {
+                $('#alert-admin_id').removeClass('d-none').html('Admin harus dipilih.');
+                isValid = false;
+            }
+
+            // Jika validasi gagal, hentikan pengiriman formulir
+            if (!isValid) {
+                return;
+            }
 
             var data = new FormData(this);
             data.append('judul', $('#judul').val());
@@ -105,65 +154,76 @@
                         timer: 1500
                     });
 
-                var lampiranHtml = '';
-                var fileType = response.data.lampiran.split('.').pop().toLowerCase();
-                if (fileType === 'mp4' || fileType === 'webm' || fileType === 'ogg') {
-                    lampiranHtml = `<video width="100" height="100" controls><source src="/storage/video/${response.data.lampiran}" type="video/${fileType}"></video>`;
-                } else {
-                    lampiranHtml = `<img src="/storage/foto/${response.data.lampiran}" width="100" height="100">`;
-                }
+                    var lampiranHtml = '';
+                    var fileType = response.data.lampiran.split('.').pop().toLowerCase();
+                    if (fileType === 'mp4' || fileType === 'webm' || fileType === 'ogg') {
+                        lampiranHtml = `<video width="100" height="100" controls><source src="/storage/video/${response.data.lampiran}" type="video/${fileType}"></video>`;
+                    } else {
+                        lampiranHtml = `<img src="/storage/foto/${response.data.lampiran}" width="100" height="100">`;
+                    }
 
-                let konten = `
-                    <tr>
-                        <td style="text-align: center">${response.data.id}</td>
-                        <td style="text-align: center">${response.data.judul}</td>
-                        <td style="text-align: center">${response.data.deskripsi}</td>
-                        <td style="text-align: center">${response.data.tags}</td>
-                        <td style="text-align: center">${response.data.tgl_publish}</td>
-                        <td style="text-align: center">${lampiranHtml}</td>
-                        <td class="text-center" style="padding-right:10px">
-                            <a href="javascript:void(0)" data-id="${response.data.id}" class="button-edit btn btn-sm">edit</a>
-                        </td>
-                    </tr>
-                `;
-                $('#table-konten').prepend(konten); // Append the new row to the end of the table
+                    let konten = `
+                        <tr>
+                            <td style="text-align: center">${response.data.id}</td>
+                            <td style="text-align: center">${response.data.judul}</td>
+                            <td style="text-align: center">${response.data.deskripsi}</td>
+                            <td style="text-align: center">${response.data.tags}</td>
+                            <td style="text-align: center">${response.data.tgl_publish}</td>
+                            <td style="text-align: center">${lampiranHtml}</td>
+                            <td class="text-center" style="padding-right:10px">
+                                <a href="javascript:void(0)" data-id="${response.data.id}" class="button-edit btn btn-sm">edit</a>
+                            </td>
+                        </tr>
+                    `;
+                    $('#table-konten').prepend(konten); // Append the new row to the end of the table
 
-                // Update the row numbers
-                $('#table-konten tr').each(function(index) {
-                    $(this).find('td:first').text(index + 1);
-                });
+                    // Update the row numbers
+                    $('#table-konten tr').each(function(index) {
+                        $(this).find('td:first').text(index + 1);
+                    });
 
-                $('#modal-create').modal('hide');
-                $('#formData')[0].reset();
-            },
+                    $('#modal-create').modal('hide');
+                    $('#formData')[0].reset();
+                },
                 error: function(error) {
-                    // Handle error
-                    if (error.responseJSON.judul) {
-                        $('#alert-judul').removeClass('d-none').html(error.responseJSON.judul[0]);
-                    }
-                    if (error.responseJSON.deskripsi) {
-                        $('#alert-deskripsi').removeClass('d-none').html(error.responseJSON.deskripsi[0]);
-                    }
-                    if (error.responseJSON.tags) {
-                        $('#alert-tags').removeClass('d-none').html(error.responseJSON.tags[0]);
-                    }
-                    if (error.responseJSON.tgl_publish) {
-                        $('#alert-tgl_publish').removeClass('d-none').html(error.responseJSON.tgl_publish[0]);
-                    }
-                    if (error.responseJSON.status) {
-                        $('#alert-status').removeClass('d-none').html(error.responseJSON.status[0]);
-                    }
-                    if (error.responseJSON.lampiran) {
-                        $('#alert-lampiran').removeClass('d-none').html(error.responseJSON.lampiran[0]);
-                    }
-                    if (error.responseJSON.jenis_id) {
-                        $('#alert-jenis_id').removeClass('d-none').html(error.responseJSON.jenis_id[0]);
-                    }
-                    if (error.responseJSON.admin_id) {
-                        $('#alert-admin_id').removeClass('d-none').html(error.responseJSON.admin_id[0]);
+                    // Handle error response
+                    if (error.responseJSON.errors) {
+                        if (error.responseJSON.errors.judul) {
+                            $('#alert-judul').removeClass('d-none').html(error.responseJSON.errors.judul[0]);
+                        }
+                        if (error.responseJSON.errors.deskripsi) {
+                            $('#alert-deskripsi').removeClass('d-none').html(error.responseJSON.errors.deskripsi[0]);
+                        }
+                        if (error.responseJSON.errors.tags) {
+                            $('#alert-tags').removeClass('d-none').html(error.responseJSON.errors.tags[0]);
+                        }
+                        if (error.responseJSON.errors.tgl_publish) {
+                            $('#alert-tgl_publish').removeClass('d-none').html(error.responseJSON.errors.tgl_publish[0]);
+                        }
+                        if (error.responseJSON.errors.status) {
+                            $('#alert-status').removeClass('d-none').html(error.responseJSON.errors.status[0]);
+                        }
+                        if (error.responseJSON.errors.lampiran) {
+                            $('#alert-lampiran').removeClass('d-none').html(error.responseJSON.errors.lampiran[0]);
+                        }
+                        if (error.responseJSON.errors.jenis_id) {
+                            $('#alert-jenis').removeClass('d-none').html(error.responseJSON.errors.jenis_id[0]);
+                        }
+                        if (error.responseJSON.errors.admin_id) {
+                            $('#alert-admin_id').removeClass('d-none').html(error.responseJSON.errors.admin_id[0]);
+                        }
                     }
                 }
             });
+        });
+
+        // Hide alerts when the user starts typing or changes file input
+        $('#judul, #deskripsi, #tags, #tgl_publish, #status, #jenis_id, #admin_id').on('input change', function() {
+            $(this).next('.alert-danger').addClass('d-none').html('');
+        });
+
+        $('#lampiran').on('change', function() {
+            $('#alert-lampiran').addClass('d-none').html('');
         });
     });
 </script>

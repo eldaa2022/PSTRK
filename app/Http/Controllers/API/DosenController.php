@@ -32,6 +32,7 @@ class DosenController extends Controller
             'kompetensi' => 'required',
             'matkul' => 'required',
             'lampiran' => 'required', // Ini untuk kasi tau lulusan mana
+            'pddikti' => 'required',
             'status' => 'required',
             'admin_id' => 'required',
         ]);
@@ -50,6 +51,7 @@ class DosenController extends Controller
             'kompetensi' => $request-> kompetensi,
             'matkul' => $request-> matkul,
             'lampiran' => $request-> lampiran,
+            'pddikti' => $request-> pddikti,
             'status' => $request-> status,
             'admin_id' => $request-> admin_id
         ]);
@@ -81,7 +83,8 @@ class DosenController extends Controller
             'kompetensi' => 'required',
             'matkul' => 'required',
             'lampiran' => 'required',
-            // 'status' => 'required',
+            'pddikti' => 'required',
+            'status' => 'required',
             // 'admin_id' => 'required',
         ]);
 
@@ -107,11 +110,12 @@ class DosenController extends Controller
                     'kompetensi' => $request->input('kompetensi'),
                     'matkul' => $request->input('matkul'),
                     'lampiran' => $request->input('lampiran'),
-                    // 'status' => $request->input('status'),
+                    'pddikti' => $request->input('pddikti'),
+                    'status' => $request->input('status'),
                     // 'admin_id' => $request->input('admin_id'),
                 ]);
             } else {
-                // Update dosen data without changing photo
+
                 $dosen->update([
                     'nip' => $request->input('nip'),
                     'nama' => $request->input('nama'),
@@ -119,7 +123,8 @@ class DosenController extends Controller
                     'kompetensi' => $request->input('kompetensi'),
                     'matkul' => $request->input('matkul'),
                     'lampiran' => $request->input('lampiran'),
-                    // 'status' => $request->input('status'),
+                    'pddikti' => $request->input('pddikti'),
+                    'status' => $request->input('status'),
                     // 'admin_id' => $request->input('admin_id'),
                 ]);
             }

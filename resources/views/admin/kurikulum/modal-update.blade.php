@@ -27,11 +27,6 @@
                         <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-smstr-edit"></div>
                     </div>
                     <div class="form-group">
-                        <label for="deskripsi-edit" class="control-label">Deskripsi</label>
-                        <input type="text" class="form-control" id="deskripsi-edit" name="deskripsi-edit">
-                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-deskripsi-edit"></div>
-                    </div>
-                    <div class="form-group">
                         <label for="sks_teori-edit" class="control-label">SKS Teori</label>
                         <input type="number" class="form-control" id="sks_teori-edit" name="sks_teori-edit">
                         <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-sks_teori-edit"></div>
@@ -55,104 +50,175 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">TUTUP</button>
-                <button type="submit" class="btn btn-primary" id="update" data-bs-dismiss="modal">UPDATE</button>
+                <button type="submit" class="btn btn-primary" id="update">UPDATE</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-$(document).ready(function(){
-    //button create post event
-    $('body').on('click', '#btn-edit-post', function () {
-        let post_id = $(this).data('id');
+    $(document).ready(function(){
+        // Event handler for edit button
+        $('body').on('click', '#btn-edit-post', function () {
+            let post_id = $(this).data('id');
 
-        //fetch detail post with ajax
-        $.ajax({
-            url: '/api/kurikulums/' + post_id,
-            type: "GET",
-            cache: false,
-            success: function(response){
+            // Fetch data for the selected post
+            $.ajax({
+                url: '/api/kurikulums/' + post_id,
+                type: "GET",
+                cache: false,
+                success: function(response){
                 var kurikulum = response.data;
-                //fill data to form
+
+                    // Fill form with the fetched data
                 $('#post_id').val(kurikulum.id);
                 $('#kode_mk-edit').val(kurikulum.kode_mk);
                 $('#nama_mk-edit').val(kurikulum.nama_mk);
                 $('#smstr-edit').val(kurikulum.smstr);
-                $('#deskripsi-edit').val(kurikulum.deskripsi);
                 $('#sks_teori-edit').val(kurikulum.sks_teori);
                 $('#jam_teori-edit').val(kurikulum.jam_teori);
                 $('#sks_prak-edit').val(kurikulum.sks_prak);
                 $('#jam_prak-edit').val(kurikulum.jam_prak);
 
-                //open modal
-                $('#modal-edit').modal('show');
+                    // Show the modal
+                    $('#modal-edit').modal('show');
+                }
+            });
+        });
+
+        // Action update post
+        $('#update').click(function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            // Clear previous alerts
+            $('.alert').addClass('d-none').html('');
+
+            var isValid = true;
+
+            // Validate each input
+            if ($('#kode_mk-edit').val() === '') {
+                $('#alert-kode_mk-edit').removeClass('d-none').html('Kode mata kuliah tidak boleh kosong.');
+                isValid = false;
             }
+            if ($('#nama_mk-edit').val() === '') {
+                $('#alert-nama_mk-edit').removeClass('d-none').html('Nama mata kuliah tidak boleh kosong.');
+                isValid = false;
+            }
+            if ($('#smstr-edit').val() === '') {
+                $('#alert-smstr-edit').removeClass('d-none').html('Semester tidak boleh kosong.');
+                isValid = false;
+            }
+            if ($('#sks_teori-edit').val() === '') {
+                $('#alert-sks_teori-edit').removeClass('d-none').html('SKS teori tidak boleh kosong.');
+                isValid = false;
+            }
+            if ($('#jam_teori-edit').val() === '') {
+                $('#alert-jam_teori-edit').removeClass('d-none').html('Jam teori tidak boleh kosong.');
+                isValid = false;
+            }
+            if ($('#sks_prak-edit').val() === '') {
+                $('#alert-sks_prak-edit').removeClass('d-none').html('SKS praktikum tidak boleh kosong.');
+                isValid = false;
+            }
+            if ($('#jam_prak-edit').val() === '') {
+                $('#alert-jam_prak-edit').removeClass('d-none').html('Jam praktikum tidak boleh kosong.');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                return; // Stop execution if validation fails
+            }
+
+            let post_id = $('#post_id').val();
+            var form = new FormData();
+
+            form.append('_token', $('input[name=_token]').val());
+            form.append('_method', 'PUT');
+            form.append('kode_mk', $('#kode_mk-edit').val());
+            form.append('nama_mk', $('#nama_mk-edit').val());
+            form.append('smstr', $('#smstr-edit').val());
+            form.append('sks_teori', $('#sks_teori-edit').val());
+            form.append('jam_teori', $('#jam_teori-edit').val());
+            form.append('sks_prak', $('#sks_prak-edit').val());
+            form.append('jam_prak', $('#jam_prak-edit').val());
+
+
+
+            // Ajax
+            $.ajax({
+                url: '/api/kurikulums/' + post_id,
+                type: "POST",
+                data: form,
+                processData: false,
+                contentType: false,
+                success: function(response){
+                    // Show success message
+                    Swal.fire({
+                        type: 'success',
+                        icon: 'success',
+                        title: `${response.message}`,
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+
+                    // Update the corresponding row in the table
+                    let updatedRow = `
+                    <tr id="index_${response.data.id}">
+                        <td>${response.data.id}</td>
+                        <td>${response.data.kode_mk}</td>
+                        <td>${response.data.nama_mk}</td>
+                        <td>${response.data.smstr}</td>
+                        <td>${response.data.sks_teori}</td>
+                        <td>${response.data.jam_teori}</td>
+                        <td>${response.data.sks_prak}</td>
+                        <td>${response.data.jam_prak}</td>
+                        <td><a href="javascript:void(0)" id="btn-edit-post" data-id="${response.data.id}" class="button-edit btn btn-sm">edit</a></td>
+                    </tr>
+                    `;
+
+                    // Replace updated row
+                    $(`#index_${response.data.id}`).replaceWith(updatedRow);
+
+                    // Clear form
+                    $('#formData')[0].reset();
+
+                    // Close modal (if not closed automatically)
+                    $('#modal-edit').modal('hide');
+                },
+                error: function(error) {
+                    // Handle server-side validation errors
+                    if (error.responseJSON.errors) {
+                        // Validate each field and display error messages
+                        if (error.responseJSON.errors.kode_mk) {
+                            $('#alert-kode_mk-edit').removeClass('d-none').html(error.responseJSON.errors.kode_mk[0]);
+                        }
+                        if (error.responseJSON.errors.nama_mk) {
+                            $('#alert-nama_mk-edit').removeClass('d-none').html(error.responseJSON.errors.nama_mk[0]);
+                        }
+                        if (error.responseJSON.errors.smstr) {
+                            $('#alert-smstr-edit').removeClass('d-none').html(error.responseJSON.errors.smstr[0]);
+                        }
+                        if (error.responseJSON.errors.sks_teori) {
+                            $('#alert-sks_teori-edit').removeClass('d-none').html(error.responseJSON.errors.sks_teori[0]);
+                        }
+                        if (error.responseJSON.errors.jam_teori) {
+                            $('#alert-jam_teori-edit').removeClass('d-none').html(error.responseJSON.errors.jam_teori[0]);
+                        }
+                        if (error.responseJSON.errors.sks_prak) {
+                            $('#alert-sks_prak-edit').removeClass('d-none').html(error.responseJSON.errors.sks_prak[0]);
+                        }
+                        if (error.responseJSON.errors.jam_prak) {
+                            $('#alert-jam_prak-edit').removeClass('d-none').html(error.responseJSON.errors.jam_prak[0]);
+                        }
+                    }
+                }
+            });
+        });
+
+        // Remove alert messages when typing
+        $('#kode_mk-edit, #nama_mk-edit, #smstr-edit, #sks_teori-edit, #jam_teori-edit, #sks_prak-edit, #jam_prak-edit').on('input change', function() {
+            $(this).siblings('.alert').addClass('d-none').html('');
         });
     });
-
-    //action update post
-    $('#update').click(function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        let post_id = $('#post_id').val();
-        var form = new FormData();
-
-        form.append('_token', $('input[name=_token]').val());
-        form.append('_method', 'PUT');
-        form.append('kode_mk', $('#kode_mk-edit').val());
-        form.append('nama_mk', $('#nama_mk-edit').val());
-        form.append('smstr', $('#smstr-edit').val());
-        form.append('deskripsi', $('#deskripsi-edit').val());
-        form.append('sks_teori', $('#sks_teori-edit').val());
-        form.append('jam_teori', $('#jam_teori-edit').val());
-        form.append('sks_prak', $('#sks_prak-edit').val());
-        form.append('jam_prak', $('#jam_prak-edit').val());
-
-        //ajax
-        $.ajax({
-            url: '/api/kurikulums/' + post_id,
-            type: "POST",
-            data: form,
-            processData: false,
-            contentType: false,
-            success: function(response){
-                //show success message
-                Swal.fire({
-                    type: 'success',
-                    icon: 'success',
-                    title: `${response.message}`,
-                    showConfirmButton: false,
-                    timer: 3000
-                });
-
-                //update table row
-                let kurikulum = `
-                <tr id="index_${response.data.id}">
-                    <td>${response.data.id}</td>
-                    <td>${response.data.kode_mk}</td>
-                    <td>${response.data.nama_mk}</td>
-                    <td>${response.data.smstr}</td>
-                    <td>${response.data.deskripsi}</td>
-                    <td>${response.data.sks_teori}</td>
-                    <td>${response.data.jam_teori}</td>
-                    <td>${response.data.sks_prak}</td>
-                    <td>${response.data.jam_prak}</td>
-                    <td><a href="javascript:void(0)" id="btn-edit-post" data-id="${response.data.id}" class="button-edit btn btn-sm">edit</a></td>
-                </tr>
-                `;
-
-                //replace updated row
-                $(`#index_${response.data.id}`).replaceWith(kurikulum);
-
-                //clear form
-                $('#formData')[0].reset();
-
-                //close modal (if not closed automatically)
-                $('#modal-edit').modal('hide');
-            },
-        });
-    });
-});
-
 </script>

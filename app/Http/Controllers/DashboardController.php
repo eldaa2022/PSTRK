@@ -7,7 +7,7 @@ use App\Models\Agenda;
 use App\Models\Alumni;
 use App\Models\Kontak;
 use App\Models\Konten;
-use App\Models\jenis_konten;
+use App\Models\Jenis_konten;
 use Illuminate\Http\Request;
 use App\Charts\JumlahPrestasiChart;
 

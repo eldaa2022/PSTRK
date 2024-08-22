@@ -7,39 +7,20 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="formData" enctype="multipart/form-data" method="POST">
+                <form id="formDataEdit" enctype="multipart/form-data" method="POST">
                     @method('PUT')
                     <input type="hidden" id="post_id">
+                    <input type="hidden" id="row_index">
                     @csrf
                     <div class="form-group">
-                        <label for="email-edit" class="control-label">Email</label>
-                        <input type="email" class="form-control" id="email-edit" name="email-edit">
-                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-email-edit"></div>
+                        <label for="kontak-edit" class="control-label">Kontak</label>
+                        <input type="text" class="form-control" id="kontak-edit" name="kontak-edit">
+                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-kontak-edit"></div>
                     </div>
                     <div class="form-group">
-                        <label for="alamat-edit" class="control-label">Alamat</label>
-                        <input type="text" class="form-control" id="alamat-edit" name="alamat-edit">
-                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-alamat-edit"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="no_tlp-edit" class="control-label">No Telpon</label>
-                        <input type="text" class="form-control" id="no_tlp-edit" name="no_tlp-edit">
-                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-no_tlp-edit"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="instagram-edit" class="control-label">Instagram</label>
-                        <input type="text" class="form-control" id="instagram-edit" name="instagram-edit">
-                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-instagram-edit"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="youtube-edit" class="control-label">Youtube</label>
-                        <input type="text" class="form-control" id="youtube-edit" name="youtube-edit">
-                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-youtube-edit"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="whatsapp-edit" class="control-label">Whatsapp</label>
-                        <input type="text" class="form-control" id="whatsapp-edit" name="whatsapp-edit">
-                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-whatsapp-edit"></div>
+                        <label for="jenis_kontak-edit" class="control-label">Jenis Kontak</label>
+                        <input type="text" class="form-control" id="jenis_kontak-edit" name="jenis_kontak-edit">
+                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-jenis_kontak-edit"></div>
                     </div>
                 </form>
             </div>
@@ -53,48 +34,43 @@
 
 <script>
 $(document).ready(function(){
-    //button create post event
+    // Button edit post event
     $('body').on('click', '#btn-edit-post', function () {
         let post_id = $(this).data('id');
+        let row_index = $(this).closest('tr').index(); // Get the row index
 
-        //fetch detail post with ajax
+        // Fetch detail post with AJAX
         $.ajax({
             url: '/api/kontaks/' + post_id,
             type: "GET",
             cache: false,
             success: function(response){
                 var kontak = response.data;
-                //fill data to form
+                // Fill data to form
                 $('#post_id').val(kontak.id);
-                $('#email-edit').val(kontak.email);
-                $('#alamat-edit').val(kontak.alamat);
-                $('#no_tlp-edit').val(kontak.no_tlp);
-                $('#instagram-edit').val(kontak.instagram);
-                $('#youtube-edit').val(kontak.youtube);
-                $('#whatsapp-edit').val(kontak.whatsapp);
+                $('#row_index').val(row_index); // Store the row index
+                $('#kontak-edit').val(kontak.kontak);
+                $('#jenis_kontak-edit').val(kontak.jenis_kontak);
 
-                //open modal
+                // Open modal
                 $('#modal-edit').modal('show');
             }
         });
     });
 
-    //action update post
+    // Action update post
     $('#update').click(function(e) {
         e.preventDefault();
         let post_id = $('#post_id').val();
+        let row_index = $('#row_index').val(); // Get the stored row index
         var form = new FormData();
 
         form.append('_token', $('input[name=_token]').val());
         form.append('_method', 'PUT');
-        form.append('email', $('#email-edit').val());
-        form.append('alamat', $('#alamat-edit').val());
-        form.append('no_tlp', $('#no_tlp-edit').val());
-        form.append('instagram', $('#instagram-edit').val());
-        form.append('youtube', $('#youtube-edit').val());
-        form.append('whatsapp', $('#whatsapp-edit').val());
+        form.append('kontak', $('#kontak-edit').val());
+        form.append('jenis_kontak', $('#jenis_kontak-edit').val());
 
-        //ajax
+        // AJAX request
         $.ajax({
             url: '/api/kontaks/' + post_id,
             type: "POST",
@@ -109,31 +85,37 @@ $(document).ready(function(){
                     timer: 3000
                 });
 
-                //update table row
+                // Update table row at the same position
+                let rowNumber = parseInt(row_index) + 1;
+
                 let kontak = `
                 <tr id="index_${response.data.id}">
-                    <td>${response.data.id}</td>
-                    <td>${response.data.email}</td>
-                    <td>${response.data.alamat}</td>
-                    <td>${response.data.no_tlp}</td>
-                    <td>${response.data.instagram}</td>
-                    <td>${response.data.youtube}</td>
-                    <td>${response.data.whatsapp}</td>
-                    <td><a href="javascript:void(0)" id="btn-edit-post" data-id="${response.data.id}" class="button-edit btn btn-sm">edit</a></td>
+                    <td class="text-center">${rowNumber}</td>
+                    <td class="text-center">${response.data.kontak}</td>
+                    <td class="text-center">${response.data.jenis_kontak}</td>
+                    <td class="text-center"><a href="javascript:void(0)" id="btn-edit-post" data-id="${response.data.id}" class="button-edit btn btn-sm">edit</a></td>
                 </tr>
                 `;
 
-                //replace updated row
-                $(`#index_${response.data.id}`).replaceWith(kontak);
+                // Replace updated row using the stored index
+                $('#table-kontaks tr').eq(row_index).replaceWith(kontak);
 
-                //clear form
-                $('#formData')[0].reset();
+                // Clear form
+                $('#formDataEdit')[0].reset();
 
-                //close modal
+                // Close modal
                 $('#modal-edit').modal('hide');
             },
-            error: function(xhr, status, error){
-                console.log(xhr.responseText); // Log the error response
+            error: function(error){
+                // Handle error
+                const errorFields = ['kontak-edit', 'jenis_kontak-edit'];
+                errorFields.forEach(field => {
+                    if (error.responseJSON[field.replace('-edit', '')]) {
+                        $(`#alert-${field}`).removeClass('d-none').html(`${field.split('-')[0].charAt(0).toUpperCase() + field.split('-')[0].slice(1)} harus diisi.`);
+                    } else {
+                        $(`#alert-${field}`).addClass('d-none');
+                    }
+                });
             }
         });
     });

@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">TAMBAH DOSEN</h5>
+                <h5 class="modal-title" id="exampleModalLabel">DATA HIMA</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                 </button>
             </div>
@@ -18,22 +18,22 @@
                     <div class="form-group">
                         <label for="name" class="control-label">Sejarah</label>
                         <input type="text" class="form-control" id="sejarah" name="sejarah">
-                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-nip"></div>
+                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-sejarah"></div>
                     </div>
                     <div class="form-group">
                         <label class="control-label">Visi</label>
                         <input type="text" class="form-control" id="visi" name="visi">
-                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-email"></div>
+                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-visi"></div>
                     </div>
                     <div class="form-group">
                         <label for="name" class="control-label">Misi</label>
                         <input type="text" class="form-control" id="misi" name="misi">
-                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-kompetensi"></div>
+                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-misi"></div>
                     </div>
                     <div class="form-group">
                         <label for="name" class="control-label">Deskripsi</label>
                         <input type="text" class="form-control" id="deskripsi" name="deskripsi">
-                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-matkul"></div>
+                        <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-deskripsi"></div>
                     </div>
                     <div class="form-group">
                         <label for="name" class="control-label">Foto</label>
@@ -60,13 +60,42 @@
         e.preventDefault();
         e.stopPropagation();
 
+        // Clear previous alerts
+        $('.alert').addClass('d-none').html('');
+
+        var isValid = true;
+
+        // Validate each input
+        if ($('#nama').val().trim() === '') {
+            $('#alert-nama').removeClass('d-none').html('Nama tidak boleh kosong.');
+            isValid = false;
+        }
+        if ($('#sejarah').val().trim() === '') {
+            $('#alert-sejarah').removeClass('d-none').html('Sejarah tidak boleh kosong.');
+            isValid = false;
+        }
+        if ($('#visi').val().trim() === '') {
+            $('#alert-visi').removeClass('d-none').html('Visi tidak boleh kosong.');
+            isValid = false;
+        }
+        if ($('#misi').val().trim() === '') {
+            $('#alert-misi').removeClass('d-none').html('Misi tidak boleh kosong.');
+            isValid = false;
+        }
+        if ($('#deskripsi').val().trim() === '') {
+            $('#alert-deskripsi').removeClass('d-none').html('Deskripsi tidak boleh kosong.');
+            isValid = false;
+        }
+        if ($('#foto')[0].files.length === 0) {
+            $('#alert-foto').removeClass('d-none').html('Foto harus diunggah.');
+            isValid = false;
+        }
+
+        if (!isValid) {
+            return; // Stop execution if validation fails
+        }
+
         var data = new FormData(this);
-        data.append('nama', $('#nama').val());
-        data.append('sejarah', $('#sejarah').val());
-        data.append('visi', $('#visi').val());
-        data.append('misi', $('#misi').val());
-        data.append('deskripsi', $('#deskripsi').val());
-        data.append('foto', $('#foto')[0].files[0]);
         data.append('admin_id', '1'); // Assume '1' is the admin_id. Change as necessary.
 
         $.ajax({
@@ -100,39 +129,40 @@
                     </tr>
                 `;
                 $('#table-himas').prepend(hima); // Append the new row to the end of the table
-                                // Update the row numbers
+                // Update the row numbers
                 $('#table-himas tr').each(function(index) {
                     $(this).find('td:first').text(index + 1);});
                 $('#modal-create').modal('hide');
                 $('#formData')[0].reset();
             },
             error: function(error) {
-                // Handle error
-                if (error.responseJSON.nama) {
-                    $('#alert-nama').removeClass('d-none').html(error.responseJSON.nama[0]);
-                }
-                if (error.responseJSON.nip) {
-                    $('#alert-nip').removeClass('d-none').html(error.responseJSON.nip[0]);
-                }
-                if (error.responseJSON.email) {
-                    $('#alert-email').removeClass('d-none').html(error.responseJSON.email[0]);
-                }
-                if (error.responseJSON.kompetensi) {
-                    $('#alert-kompetensi').removeClass('d-none').html(error.responseJSON.kompetensi[0]);
-                }
-                if (error.responseJSON.matkul) {
-                    $('#alert-matkul').removeClass('d-none').html(error.responseJSON.matkul[0]);
-                }
-                if (error.responseJSON.status) {
-                    $('#alert-status').removeClass('d-none').html(error.responseJSON.status[0]);
-                }
-                if (error.responseJSON.lampiran) {
-                    $('#alert-lampiran').removeClass('d-none').html(error.responseJSON.lampiran[0]);
-                }
-                if (error.responseJSON.foto) {
-                    $('#alert-foto').removeClass('d-none').html(error.responseJSON.foto[0]);
+                // Handle server-side validation errors
+                if (error.responseJSON.errors) {
+                    if (error.responseJSON.errors.nama) {
+                        $('#alert-nama').removeClass('d-none').html(error.responseJSON.errors.nama[0]);
+                    }
+                    if (error.responseJSON.errors.sejarah) {
+                        $('#alert-sejarah').removeClass('d-none').html(error.responseJSON.errors.sejarah[0]);
+                    }
+                    if (error.responseJSON.errors.visi) {
+                        $('#alert-visi').removeClass('d-none').html(error.responseJSON.errors.visi[0]);
+                    }
+                    if (error.responseJSON.errors.misi) {
+                        $('#alert-misi').removeClass('d-none').html(error.responseJSON.errors.misi[0]);
+                    }
+                    if (error.responseJSON.errors.deskripsi) {
+                        $('#alert-deskripsi').removeClass('d-none').html(error.responseJSON.errors.deskripsi[0]);
+                    }
+                    if (error.responseJSON.errors.foto) {
+                        $('#alert-foto').removeClass('d-none').html(error.responseJSON.errors.foto[0]);
+                    }
                 }
             }
         });
+    });
+
+    // Remove alert messages when typing
+    $('#nama, #sejarah, #visi, #misi, #deskripsi, #foto').on('input change', function() {
+        $(this).siblings('.alert').addClass('d-none').html('');
     });
 </script>

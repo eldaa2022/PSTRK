@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Edit Data Kurikulum</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Edit Data Agenda</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -50,101 +50,173 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">TUTUP</button>
-                <button type="submit" class="btn btn-primary" id="update" data-bs-dismiss="modal">UPDATE</button>
+                <button type="submit" class="btn btn-primary" id="update">UPDATE</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-$(document).ready(function(){
-    //button create post event
-    $('body').on('click', '#btn-edit-post', function () {
-        let post_id = $(this).data('id');
+    $(document).ready(function(){
+        // Event handler for edit button
+        $('body').on('click', '#btn-edit-post', function () {
+            let post_id = $(this).data('id');
 
-        //fetch detail post with ajax
-        $.ajax({
-            url: '/api/agendas/' + post_id,
-            type: "GET",
-            cache: false,
-            success: function(response){
-                var agenda = response.data;
-                //fill data to form
-                $('#post_id').val(agenda.id);
-                $('#judul-edit').val(agenda.judul);
-                $('#deskripsi-edit').val(agenda.deskripsi);
-                $('#tgl_mulai-edit').val(agenda.tgl_mulai);
-                $('#tgl_selesai-edit').val(agenda.tgl_selesai);
-                $('#tags-edit').val(agenda.tags);
-                $('#lokasi-edit').val(agenda.lokasi);
-                $('#penyelenggara-edit').val(agenda.penyelenggara);
+            // Fetch data for the selected post
+            $.ajax({
+                url: '/api/agendas/' + post_id,
+                type: "GET",
+                cache: false,
+                success: function(response){
+                    var agenda = response.data;
 
-                //open modal
-                $('#modal-edit').modal('show');
+                    // Fill form with the fetched data
+                    $('#post_id').val(agenda.id);
+                    $('#judul-edit').val(agenda.judul);
+                    $('#deskripsi-edit').val(agenda.deskripsi);
+                    $('#tgl_mulai-edit').val(agenda.tgl_mulai);
+                    $('#tgl_selesai-edit').val(agenda.tgl_selesai);
+                    $('#tags-edit').val(agenda.tags);
+                    $('#lokasi-edit').val(agenda.lokasi);
+                    $('#penyelenggara-edit').val(agenda.penyelenggara);
+
+                    // Show the modal
+                    $('#modal-edit').modal('show');
+                }
+            });
+        });
+
+        // Action update post
+        $('#update').click(function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            // Clear previous alerts
+            $('.alert').addClass('d-none').html('');
+
+            var isValid = true;
+
+            // Validate each input
+            if ($('#judul-edit').val().trim() === '') {
+                $('#alert-judul-edit').removeClass('d-none').html('Judul tidak boleh kosong.');
+                isValid = false;
             }
+            if ($('#deskripsi-edit').val().trim() === '') {
+                $('#alert-deskripsi-edit').removeClass('d-none').html('Deskripsi tidak boleh kosong.');
+                isValid = false;
+            }
+            if ($('#tgl_mulai-edit').val() === '') {
+                $('#alert-tgl_mulai-edit').removeClass('d-none').html('Tanggal mulai tidak boleh kosong.');
+                isValid = false;
+            }
+            if ($('#tgl_selesai-edit').val() === '') {
+                $('#alert-tgl_selesai-edit').removeClass('d-none').html('Tanggal selesai tidak boleh kosong.');
+                isValid = false;
+            }
+            if ($('#tags-edit').val().trim() === '') {
+                $('#alert-tags-edit').removeClass('d-none').html('Tags tidak boleh kosong.');
+                isValid = false;
+            }
+            if ($('#lokasi-edit').val().trim() === '') {
+                $('#alert-lokasi-edit').removeClass('d-none').html('Lokasi tidak boleh kosong.');
+                isValid = false;
+            }
+            if ($('#penyelenggara-edit').val().trim() === '') {
+                $('#alert-penyelenggara-edit').removeClass('d-none').html('Penyelenggara tidak boleh kosong.');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                return; // Stop execution if validation fails
+            }
+
+            let post_id = $('#post_id').val();
+            var form = new FormData();
+
+            form.append('_token', $('input[name=_token]').val());
+            form.append('_method', 'PUT');
+            form.append('judul', $('#judul-edit').val());
+            form.append('deskripsi', $('#deskripsi-edit').val());
+            form.append('tgl_mulai', $('#tgl_mulai-edit').val());
+            form.append('tgl_selesai', $('#tgl_selesai-edit').val());
+            form.append('tags', $('#tags-edit').val());
+            form.append('lokasi', $('#lokasi-edit').val());
+            form.append('penyelenggara', $('#penyelenggara-edit').val());
+
+            // Ajax
+            $.ajax({
+                url: '/api/agendas/' + post_id,
+                type: "POST",
+                data: form,
+                processData: false,
+                contentType: false,
+                success: function(response){
+                    // Show success message
+                    Swal.fire({
+                        type: 'success',
+                        icon: 'success',
+                        title: `${response.message}`,
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+
+                    // Update the corresponding row in the table
+                    let updatedRow = `
+                    <tr id="index_${response.data.id}">
+                        <td>${response.data.id}</td>
+                        <td>${response.data.judul}</td>
+                        <td>${response.data.deskripsi}</td>
+                        <td>${response.data.tgl_mulai}</td>
+                        <td>${response.data.tgl_selesai}</td>
+                        <td>${response.data.tags}</td>
+                        <td>${response.data.lokasi}</td>
+                        <td>${response.data.penyelenggara}</td>
+                        <td><a href="javascript:void(0)" id="btn-edit-post" data-id="${response.data.id}" class="button-edit btn btn-sm">edit</a></td>
+                    </tr>
+                    `;
+
+                    // Replace updated row
+                    $(`#index_${response.data.id}`).replaceWith(updatedRow);
+
+                    // Clear form
+                    $('#formData')[0].reset();
+
+                    // Close modal (if not closed automatically)
+                    $('#modal-edit').modal('hide');
+                },
+                error: function(error) {
+                    // Handle server-side validation errors
+                    if (error.responseJSON.errors) {
+                        // Validate each field and display error messages
+                        if (error.responseJSON.errors.judul) {
+                            $('#alert-judul-edit').removeClass('d-none').html(error.responseJSON.errors.judul[0]);
+                        }
+                        if (error.responseJSON.errors.deskripsi) {
+                            $('#alert-deskripsi-edit').removeClass('d-none').html(error.responseJSON.errors.deskripsi[0]);
+                        }
+                        if (error.responseJSON.errors.tgl_mulai) {
+                            $('#alert-tgl_mulai-edit').removeClass('d-none').html(error.responseJSON.errors.tgl_mulai[0]);
+                        }
+                        if (error.responseJSON.errors.tgl_selesai) {
+                            $('#alert-tgl_selesai-edit').removeClass('d-none').html(error.responseJSON.errors.tgl_selesai[0]);
+                        }
+                        if (error.responseJSON.errors.tags) {
+                            $('#alert-tags-edit').removeClass('d-none').html(error.responseJSON.errors.tags[0]);
+                        }
+                        if (error.responseJSON.errors.lokasi) {
+                            $('#alert-lokasi-edit').removeClass('d-none').html(error.responseJSON.errors.lokasi[0]);
+                        }
+                        if (error.responseJSON.errors.penyelenggara) {
+                            $('#alert-penyelenggara-edit').removeClass('d-none').html(error.responseJSON.errors.penyelenggara[0]);
+                        }
+                    }
+                }
+            });
+        });
+
+        // Remove alert messages when typing
+        $('#judul-edit, #deskripsi-edit, #tgl_mulai-edit, #tgl_selesai-edit, #tags-edit, #lokasi-edit, #penyelenggara-edit').on('input change', function() {
+            $(this).siblings('.alert').addClass('d-none').html('');
         });
     });
-
-    //action update post
-    $('#update').click(function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        let post_id = $('#post_id').val();
-        var form = new FormData();
-
-        form.append('_token', $('input[name=_token]').val());
-        form.append('_method', 'PUT');
-        form.append('judul', $('#judul-edit').val());
-        form.append('deskripsi', $('#deskripsi-edit').val());
-        form.append('tgl_mulai', $('#tgl_mulai-edit').val());
-        form.append('tgl_selesai', $('#tgl_selesai-edit').val());
-        form.append('tags', $('#tags-edit').val());
-        form.append('lokasi', $('#lokasi-edit').val());
-        form.append('penyelenggara', $('#penyelenggara-edit').val());
-
-        //ajax
-        $.ajax({
-            url: '/api/agendas/' + post_id,
-            type: "POST",
-            data: form,
-            processData: false,
-            contentType: false,
-            success: function(response){
-                //show success message
-                Swal.fire({
-                    type: 'success',
-                    icon: 'success',
-                    title: `${response.message}`,
-                    showConfirmButton: false,
-                    timer: 3000
-                });
-
-                //update table row
-                let agenda = `
-                <tr id="index_${response.data.id}">
-                    <td>${response.data.id}</td>
-                    <td>${response.data.judul}</td>
-                    <td>${response.data.deskripsi}</td>
-                    <td>${response.data.tgl_mulai}</td>
-                    <td>${response.data.tgl_selesai}</td>
-                    <td>${response.data.tags}</td>
-                    <td>${response.data.lokasi}</td>
-                    <td>${response.data.penyelenggara}</td>
-                    <td><a href="javascript:void(0)" id="btn-edit-post" data-id="${response.data.id}" class="button-edit btn btn-sm">edit</a></td>
-                </tr>
-                `;
-
-                //replace updated row
-                $(`#index_${response.data.id}`).replaceWith(agenda);
-
-                //clear form
-                $('#formData')[0].reset();
-
-                //close modal (if not closed automatically)
-                $('#modal-edit').modal('hide');
-            },
-        });
-    });
-});
-
 </script>

@@ -37,12 +37,17 @@
 
                     <a href="javascript:void(0)" class="button-tambah ms-1 float-end" id="btn-create-post">Tambah</a>
                 </div>
+
+                @if($dataKosong)
+                    <div class="alert alert-warning mt-4" role="alert">
+                        Data tidak ditemukan.
+                    </div>
+                @else
                 <table class="table">
                     <thead>
                         <tr>
                             <th scope="col">No.</th>
                             <th scope="col">Judul</th>
-                            <th scope="col">Deskripsi</th>
                             <th scope="col">Tags</th>
                             <th scope="col">Tags Publish</th>
                             <th scope="col">Lampiran</th>
@@ -54,7 +59,6 @@
                         <tr id="index_{{ $konten->id }}">
                             <td style="text-align: center">{{ ($videos->currentPage() - 1) * $videos->perPage() + $loop->iteration }}</td>
                             <td>{{$konten->judul}}</td>
-                            <td>{{$konten->deskripsi}}</td>
                             <td>{{$konten->tags}}</td>
                             <td>{{$konten->tgl_publish}}</td>
                             <td>
@@ -69,6 +73,12 @@
                         @endforeach
                     </tbody>
                 </table>
+
+                @endif
+                @include('admin.konten.modal-create-galeri')
+                @include('admin.konten.modal-update-galeri')
+
+                
                 <nav aria-label="Page navigation">
                     <ul class="pagination">
                         <!-- Previous Page Link -->
@@ -92,7 +102,6 @@
             </div>
         </div>
     </main><!-- End #main -->
-    @include('admin.konten.modal-create')
-    @include('admin.konten.modal-update')
+
     </body>
 </html>
